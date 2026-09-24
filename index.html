@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Bay Area Trails</title>
+    <meta name="description" content="A watercolor, isometric map of the hiking and mountain bike trails in the San Francisco Bay Area, including the trails approved to be built next." />
+    <meta name="theme-color" content="#f6efe0" />
+    <link rel="canonical" href="https://terrytan.dev/trails/bay-area/" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+    <!-- Link previews (iMessage, Slack, Facebook, LinkedIn, …). Image is made by `npm run social`. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Bay Area Trails" />
+    <meta property="og:url" content="https://terrytan.dev/trails/bay-area/" />
+    <meta property="og:title" content="Bay Area Trails" />
+    <meta property="og:description" content="A watercolor map of the hiking &amp; mountain bike trails around San Francisco Bay Area. Search, click, and explore, including the trails approved to be built next." />
+    <meta property="og:image" content="https://terrytan.dev/trails/bay-area/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A watercolor, isometric painting of the San Francisco Bay Area with its trails drawn in vermilion." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..800,100,1&family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    
+    
+    <script type="module" crossorigin src="./assets/app.js?v=1790272467615"></script>
+    <link rel="stylesheet" crossorigin href="./assets/app.css?v=1790272467615">
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+    <div id="labels" aria-hidden="true"></div>
+    <div id="tooltip" role="tooltip"></div>
+
+    <aside id="panel">
+      <header>
+        <h1><span class="wash"></span>Bay Area <em>Trails</em></h1>
+        <p id="stats" class="sub">Loading trails…</p>
+      </header>
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5 21 21" /></svg>
+        <input id="search" type="search" placeholder="Find a trail…" autocomplete="off" spellcheck="false" aria-label="Search trails" />
+        <kbd>/</kbd>
+        <button id="search-clear" class="icon-btn" aria-label="Clear search" hidden>✕</button>
+      </div>
+      <div class="filters" role="group" aria-label="Filter trails">
+        <button data-filter="all" class="on">All</button>
+        <button data-filter="hike">🥾 Hike</button>
+        <button data-filter="bike">🚵 Bike</button>
+        <span id="result-count"></span>
+      </div>
+      <div class="plan-toggle">
+        <button id="plan-btn" aria-pressed="false">
+          <span class="plan-label"><b>✦ Planned Trail Network</b><small>BATC 2,600+ mile regional priority network</small></span>
+          <span class="switch" aria-hidden="true"></span>
+        </button>
+        <div id="plan-groups" role="group" aria-label="Planned changes to show" hidden>
+          <button data-plan="new" class="on"><i class="dot new"></i>New trails</button>
+          <button data-plan="designate"><i class="dot designate"></i>E-bike changes</button>
+          <button data-plan="decommission" class="on"><i class="dot decommission"></i>Removals</button>
+        </div>
+      </div>
+      <ul id="trail-list"></ul>
+    </aside>
+
+    <aside id="builders" aria-label="Trail builders">
+      <span>Trails curated &amp; cared for by</span>
+      <a href="https://ridgetrail.org/" target="_blank" rel="noopener" title="Bay Area Ridge Trail">Bay Area Ridge Trail</a>
+      <a href="https://baytrail.org/" target="_blank" rel="noopener" title="San Francisco Bay Trail">San Francisco Bay Trail</a>
+      <a href="https://www.railstotrails.org/trailnation/bay-area-trails-collaborative/" target="_blank" rel="noopener" title="Bay Area Trails Collaborative">BATC</a>
+    </aside>
+
+    <section id="card" aria-live="polite"></section>
+
+    <div id="legend">
+      <div><span class="swatch bike"></span>Open to bikes &amp; hikers</div>
+      <div><span class="swatch hike"></span>Foot traffic only</div>
+      <div><span class="swatch basin"></span>San Francisco Bay Area</div>
+    </div>
+    <div id="legend-plan" hidden>
+      <div><span class="swatch plan-ebike"></span>New · bikes &amp; e-bikes</div>
+      <div><span class="swatch plan-nonmoto"></span>New · non-motorized</div>
+      <div><span class="swatch plan-moto"></span>New · motorcycle</div>
+      <div><span class="swatch plan-designate"></span>Newly open to e-bikes</div>
+      <div><span class="swatch plan-decommission"></span>To be removed</div>
+      <div><span class="th-mark">P</span>New trailhead</div>
+    </div>
+
+    <nav id="controls" aria-label="Map controls">
+      <div id="compass" title="North"><div id="compass-needle"><span>N</span></div></div>
+      <button id="btn-left" title="Rotate left (Q)">⟲</button>
+      <button id="btn-right" title="Rotate right (E)">⟳</button>
+      <button id="btn-in" title="Zoom in (+)">+</button>
+      <button id="btn-out" title="Zoom out (−)">−</button>
+      <button id="btn-home" title="Reset view (H)">⌂</button>
+    </nav>
+
+    <p id="hint">Drag to pan · scroll to zoom · right-drag to spin</p>
+    <footer id="attribution">
+      <a href="https://terrytan.dev/trails/bay-area" target="_blank" rel="noopener">Bay Area Trails Map</a>
+      · Trails curated from <a href="https://www.railstotrails.org/trailnation/bay-area-trails-collaborative/" target="_blank" rel="noopener">BATC</a>, <a href="https://www.ebparks.org/" target="_blank" rel="noopener">EBRPD</a>, <a href="https://parks.sccgov.org/" target="_blank" rel="noopener">SCC Parks</a>, <a href="https://www.parks.marincounty.org/" target="_blank" rel="noopener">Marin Parks</a>, &amp; <a href="https://www.nps.gov/goga/" target="_blank" rel="noopener">NPS</a>
+      · Elevation: USGS 3DEP / AWS Terrain Tiles
+    </footer>
+
+    <div id="loading"><div class="blob"></div><p>Mixing the paints…</p></div>
+  
+    <script>
+      // Failsafe: dismiss loading spinner after 3.5s under any circumstance
+      setTimeout(function() {
+        var el = document.getElementById('loading');
+        if (el && !el.classList.contains('done')) {
+          el.classList.add('done');
+          setTimeout(function() { el.style.display = 'none'; }, 600);
+        }
+      }, 3500);
+    </script>
+  </body>
+</html>

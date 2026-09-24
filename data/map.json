@@ -1,0 +1,454 @@
+{
+  "bbox": {
+    "west": -123.05,
+    "east": -121.75,
+    "south": 36.95,
+    "north": 38.35
+  },
+  "widthM": 114394,
+  "heightM": 155595,
+  "grid": {
+    "width": 750,
+    "height": 1020,
+    "spacing": 50,
+    "scale": 4
+  },
+  "elevation": {
+    "min": 0,
+    "max": 1327
+  },
+  "basin": [
+    [
+      2640,
+      153372
+    ],
+    [
+      21999,
+      153372
+    ],
+    [
+      48397,
+      153372
+    ],
+    [
+      74796,
+      153372
+    ],
+    [
+      109994,
+      153372
+    ],
+    [
+      112634,
+      116696
+    ],
+    [
+      112634,
+      61127
+    ],
+    [
+      112634,
+      5557
+    ],
+    [
+      92395,
+      2223
+    ],
+    [
+      70396,
+      2223
+    ],
+    [
+      52797,
+      27785
+    ],
+    [
+      43998,
+      61127
+    ],
+    [
+      39598,
+      94468
+    ],
+    [
+      21999,
+      116696
+    ],
+    [
+      2640,
+      138924
+    ],
+    [
+      2640,
+      153372
+    ]
+  ],
+  "lakes": [],
+  "labels": [
+    {
+      "kind": "peak",
+      "name": "Mount Diablo",
+      "x": 99954,
+      "y": 103537,
+      "ele": 1173
+    },
+    {
+      "kind": "peak",
+      "name": "Mount Tamalpais",
+      "x": 41560,
+      "y": 108794,
+      "ele": 784
+    },
+    {
+      "kind": "peak",
+      "name": "Mount Hamilton",
+      "x": 123827,
+      "y": 43500,
+      "ele": 1327
+    },
+    {
+      "kind": "peak",
+      "name": "Mount Saint Helena",
+      "x": 36764,
+      "y": 191248,
+      "ele": 1323
+    },
+    {
+      "kind": "peak",
+      "name": "Mission Peak",
+      "x": 100016,
+      "y": 62527,
+      "ele": 767
+    },
+    {
+      "kind": "peak",
+      "name": "Castle Rock",
+      "x": 84036,
+      "y": 31119,
+      "ele": 978
+    },
+    {
+      "kind": "peak",
+      "name": "Monument Peak",
+      "x": 102075,
+      "y": 60571,
+      "ele": 792
+    },
+    {
+      "kind": "peak",
+      "name": "San Bruno Mountain",
+      "x": 54293,
+      "y": 82021,
+      "ele": 402
+    },
+    {
+      "kind": "peak",
+      "name": "Montara Mountain",
+      "x": 49277,
+      "y": 69462,
+      "ele": 579
+    },
+    {
+      "kind": "peak",
+      "name": "Windy Hill",
+      "x": 70748,
+      "y": 46012,
+      "ele": 579
+    },
+    {
+      "kind": "peak",
+      "name": "Black Mountain",
+      "x": 79372,
+      "y": 41010,
+      "ele": 856
+    },
+    {
+      "kind": "peak",
+      "name": "Twin Peaks",
+      "x": 53000,
+      "y": 89400,
+      "ele": 282
+    },
+    {
+      "kind": "peak",
+      "name": "Vollmer Peak",
+      "x": 72332,
+      "y": 105204,
+      "ele": 581
+    },
+    {
+      "kind": "peak",
+      "name": "Grizzly Peak",
+      "x": 71716,
+      "y": 103693,
+      "ele": 536
+    },
+    {
+      "kind": "peak",
+      "name": "Mount Wanda",
+      "x": 81132,
+      "y": 116029,
+      "ele": 201
+    },
+    {
+      "kind": "peak",
+      "name": "Redwood Peak",
+      "x": 76116,
+      "y": 96469,
+      "ele": 490
+    },
+    {
+      "kind": "peak",
+      "name": "Rose Peak",
+      "x": 118090,
+      "y": 62016,
+      "ele": 1162
+    },
+    {
+      "kind": "peak",
+      "name": "Mount Umunhum",
+      "x": 101371,
+      "y": 23339,
+      "ele": 1063
+    },
+    {
+      "kind": "peak",
+      "name": "Mount Allison",
+      "x": 101371,
+      "y": 61349,
+      "ele": 808
+    },
+    {
+      "kind": "peak",
+      "name": "Eagle Rock",
+      "x": 73124,
+      "y": 25006,
+      "ele": 757
+    },
+    {
+      "kind": "town",
+      "name": "San Francisco",
+      "x": 55490,
+      "y": 91679
+    },
+    {
+      "kind": "town",
+      "name": "Oakland",
+      "x": 68531,
+      "y": 94957
+    },
+    {
+      "kind": "town",
+      "name": "San Jose",
+      "x": 102400,
+      "y": 43144
+    },
+    {
+      "kind": "town",
+      "name": "Berkeley",
+      "x": 68399,
+      "y": 102426
+    },
+    {
+      "kind": "town",
+      "name": "Palo Alto",
+      "x": 79812,
+      "y": 54669
+    },
+    {
+      "kind": "town",
+      "name": "Fremont",
+      "x": 93398,
+      "y": 66517
+    },
+    {
+      "kind": "town",
+      "name": "San Rafael",
+      "x": 45661,
+      "y": 113751
+    },
+    {
+      "kind": "town",
+      "name": "Santa Cruz",
+      "x": 89685,
+      "y": 2678
+    },
+    {
+      "kind": "town",
+      "name": "Walnut Creek",
+      "x": 86658,
+      "y": 106705
+    },
+    {
+      "kind": "town",
+      "name": "Redwood City",
+      "x": 71593,
+      "y": 59482
+    },
+    {
+      "kind": "village",
+      "name": "Mill Valley",
+      "x": 44438,
+      "y": 106249
+    },
+    {
+      "kind": "village",
+      "name": "Sausalito",
+      "x": 49691,
+      "y": 101037
+    },
+    {
+      "kind": "village",
+      "name": "Tiburon",
+      "x": 52216,
+      "y": 102637
+    },
+    {
+      "kind": "village",
+      "name": "Half Moon Bay",
+      "x": 54680,
+      "y": 57081
+    },
+    {
+      "kind": "village",
+      "name": "Pacifica",
+      "x": 49550,
+      "y": 73774
+    },
+    {
+      "kind": "village",
+      "name": "Los Gatos",
+      "x": 95704,
+      "y": 31764
+    },
+    {
+      "kind": "village",
+      "name": "Saratoga",
+      "x": 90371,
+      "y": 34876
+    },
+    {
+      "kind": "village",
+      "name": "Cupertino",
+      "x": 89562,
+      "y": 41455
+    },
+    {
+      "kind": "village",
+      "name": "Mountain View",
+      "x": 85012,
+      "y": 48468
+    },
+    {
+      "kind": "village",
+      "name": "Point Reyes Station",
+      "x": 21392,
+      "y": 124376
+    },
+    {
+      "kind": "village",
+      "name": "Stinson Beach",
+      "x": 35691,
+      "y": 105638
+    },
+    {
+      "kind": "village",
+      "name": "Bolinas",
+      "x": 32022,
+      "y": 106649
+    },
+    {
+      "kind": "lake",
+      "name": "San Francisco Bay",
+      "x": 64237,
+      "y": 81132,
+      "area": 1040000000
+    },
+    {
+      "kind": "lake",
+      "name": "San Pablo Bay",
+      "x": 55437,
+      "y": 124476,
+      "area": 230000000
+    },
+    {
+      "kind": "lake",
+      "name": "Suisun Bay",
+      "x": 87995,
+      "y": 125587,
+      "area": 100000000
+    },
+    {
+      "kind": "lake",
+      "name": "Pacific Ocean",
+      "x": 26399,
+      "y": 61127,
+      "area": 9999999999
+    },
+    {
+      "kind": "lake",
+      "name": "Tomales Bay",
+      "x": 14959,
+      "y": 130033,
+      "area": 28000000
+    },
+    {
+      "kind": "lake",
+      "name": "Lake Chabot",
+      "x": 83332,
+      "y": 85133,
+      "area": 1300000
+    },
+    {
+      "kind": "lake",
+      "name": "Crystal Springs Reservoir",
+      "x": 60717,
+      "y": 63349,
+      "area": 6000000
+    },
+    {
+      "kind": "lake",
+      "name": "San Andreas Lake",
+      "x": 56317,
+      "y": 72241,
+      "area": 2200000
+    },
+    {
+      "kind": "lake",
+      "name": "Lake Del Valle",
+      "x": 118794,
+      "y": 73352,
+      "area": 3000000
+    },
+    {
+      "kind": "lake",
+      "name": "Calero Reservoir",
+      "x": 111754,
+      "y": 25562,
+      "area": 1400000
+    },
+    {
+      "kind": "lake",
+      "name": "Chesbro Reservoir",
+      "x": 118794,
+      "y": 18894,
+      "area": 1100000
+    },
+    {
+      "kind": "lake",
+      "name": "Lexington Reservoir",
+      "x": 94155,
+      "y": 26673,
+      "area": 1800000
+    }
+  ],
+  "attribution": [
+    "Trails © OpenStreetMap contributors (ODbL)",
+    "Bay Area Trails Collaborative (BATC) & Rails-to-Trails Conservancy",
+    "East Bay Regional Park District (EBRPD)",
+    "Santa Clara County Parks & Recreation",
+    "Marin County Open Space District",
+    "National Park Service (GGNRA)",
+    "Elevation: AWS Terrain Tiles (USGS 3DEP, SRTM)"
+  ]
+}
