@@ -4889,7 +4889,49 @@ function Vl(e){let t=new di(.22,.75,6,1);t.translate(0,.52,0);let n=new ui(.04,.
     }
   }
   return box;
-}pick(e,t,n,r,i,a=9){let o=e.matrixWorld.elements.join(`,`)+e.projectionMatrix.elements.join(`,`)+r+i;o!==this.projectedFor&&(this.project(e,r,i),this.projectedFor=o);let s=null,c=a*a;for(let{trail:e,pts:r}of this.projected)for(let i=0;i<r.length-2;i+=2){let a=r[i],o=r[i+1],l=r[i+2],u=r[i+3];if(a===-1e9||l===-1e9)continue;let d=l-a,f=u-o,p=d*d+f*f||1,m=Math.max(0,Math.min(1,((t-a)*d+(n-o)*f)/p)),h=a+m*d-t,g=o+m*f-n,_=h*h+g*g;_<c&&(c=_,s=e)}return s}project(e,t,n){this.projected=[];let r=new Kt().multiplyMatrices(e.projectionMatrix,e.matrixWorldInverse).elements;for(let e of this.trails)if(this.matches(e))for(let i of this.world[e.id]){let a=new Float32Array(i.length/3*2);for(let e=0,o=0;e<i.length;e+=3,o+=2){let s=i[e],c=i[e+1],l=i[e+2],u=r[3]*s+r[7]*c+r[11]*l+r[15],d=(r[0]*s+r[4]*c+r[8]*l+r[12])/u,f=(r[1]*s+r[5]*c+r[9]*l+r[13])/u;if(d<-1.2||d>1.2||f<-1.2||f>1.2){a[o]=a[o+1]=-1e9;continue}a[o]=(d+1)/2*t,a[o+1]=(1-f)/2*n}this.projected.push({trail:e.id,pts:a})}}},wu=e=>document.querySelector(e),Tu=e=>e.replace(/[&<>"]/g,e=>({"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`})[e]),Eu=e=>e.toLowerCase().normalize(`NFD`).replace(/[^a-z0-9 ]/g,` `).replace(/\s+/g,` `).trim(),Du=class{trails;h;filter=`all`;plansOn=!1;planGroups=new Set([`new`,`decommission`]);query=``;results=[];active=-1;selected=null;list=wu(`#trail-list`);search=wu(`#search`);card=wu(`#card`);constructor(e,t){this.trails=e,this.h=t,this.search.addEventListener(`input`,()=>{this.query=this.search.value,this.active=-1,this.render()}),this.search.addEventListener(`keydown`,e=>{if(e.key===`ArrowDown`||e.key===`ArrowUp`){e.preventDefault();let t=this.results.length;if(!t)return;this.active=(this.active+(e.key===`ArrowDown`?1:-1)+t)%t,this.highlightActive(),this.h.onHover(this.results[this.active].id)}else if(e.key===`Enter`){let e=this.results[Math.max(0,this.active)];e&&this.h.onSelect(e.id)}else e.key===`Escape`&&(this.search.value=``,this.query=``,this.render(),this.search.blur())}),window.addEventListener(`keydown`,e=>{e.key===`/`&&document.activeElement!==this.search&&(e.preventDefault(),this.search.focus(),this.search.select())}),(() => {
+}pick(e,t,n,r,i,a=9){
+  let o=e.matrixWorld.elements.join(`,`) + e.projectionMatrix.elements.join(`,`) + r + i;
+  o!==this.projectedFor && (this.project(e,r,i), this.projectedFor=o);
+  let s=null, c=a*a;
+  for(let item of this.projected){
+    let b=item.bbox;
+    if(b && (t<b[0]-a || t>b[2]+a || n<b[1]-a || n>b[3]+a)) continue;
+    let r=item.pts;
+    for(let idx=0;idx<r.length-2;idx+=2){
+      let p1x=r[idx], p1y=r[idx+1], p2x=r[idx+2], p2y=r[idx+3];
+      if(p1x===-1e9 || p2x===-1e9) continue;
+      let d=p2x-p1x, f=p2y-p1y, p=d*d+f*f||1;
+      let m=Math.max(0,Math.min(1,((t-p1x)*d+(n-p1y)*f)/p));
+      let h=p1x+m*d-t, g=p1y+m*f-n, _=h*h+g*g;
+      _<c && (c=_, s=item.trail);
+    }
+  }
+  return s;
+}project(e,t,n){
+  this.projected=[];
+  let r=new Kt().multiplyMatrices(e.projectionMatrix,e.matrixWorldInverse).elements;
+  for(let trail of this.trails){
+    if(this.matches(trail)){
+      for(let seg of this.world[trail.id]){
+        let a=new Float32Array(seg.length/3*2);
+        let minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9,valid=!1;
+        for(let idx=0,o=0;idx<seg.length;idx+=3,o+=2){
+          let s=seg[idx],c=seg[idx+1],l=seg[idx+2];
+          let u=r[3]*s+r[7]*c+r[11]*l+r[15];
+          let d=(r[0]*s+r[4]*c+r[8]*l+r[12])/u;
+          let f=(r[1]*s+r[5]*c+r[9]*l+r[13])/u;
+          if(d<-1.2||d>1.2||f<-1.2||f>1.2){ a[o]=a[o+1]=-1e9; continue; }
+          let px=(d+1)/2*t, py=(1-f)/2*n;
+          a[o]=px; a[o+1]=py;
+          if(px<minX)minX=px; if(px>maxX)maxX=px;
+          if(py<minY)minY=py; if(py>maxY)maxY=py;
+          valid=!0;
+        }
+        if(valid){ this.projected.push({trail:trail.id, pts:a, bbox:[minX,minY,maxX,maxY]}); }
+      }
+    }
+  }
+}},wu=e=>document.querySelector(e),Tu=e=>e.replace(/[&<>"]/g,e=>({"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`})[e]),Eu=e=>e.toLowerCase().normalize(`NFD`).replace(/[^a-z0-9 ]/g,` `).replace(/\s+/g,` `).trim(),Du=class{trails;h;filter=`all`;plansOn=!1;planGroups=new Set([`new`,`decommission`]);query=``;results=[];active=-1;selected=null;list=wu(`#trail-list`);search=wu(`#search`);card=wu(`#card`);constructor(e,t){this.trails=e,this.h=t,this.search.addEventListener(`input`,()=>{this.query=this.search.value,this.active=-1,this.render()}),this.search.addEventListener(`keydown`,e=>{if(e.key===`ArrowDown`||e.key===`ArrowUp`){e.preventDefault();let t=this.results.length;if(!t)return;this.active=(this.active+(e.key===`ArrowDown`?1:-1)+t)%t,this.highlightActive(),this.h.onHover(this.results[this.active].id)}else if(e.key===`Enter`){let e=this.results[Math.max(0,this.active)];e&&this.h.onSelect(e.id)}else e.key===`Escape`&&(this.search.value=``,this.query=``,this.render(),this.search.blur())}),window.addEventListener(`keydown`,e=>{e.key===`/`&&document.activeElement!==this.search&&(e.preventDefault(),this.search.focus(),this.search.select())}),(() => {
   let panel = wu('#panel');
   let handle = wu('.sheet-handle');
   let header = wu('#panel header');
@@ -5080,7 +5122,33 @@ wu(`#btn-left`).addEventListener(`click`,()=>this.h.onRotate(-1)),wu(`#btn-right
           ${Ou(e)}
           <span class="li-name">${Tu(e.name)}${e.plan?`<small class="plan-tag">${ku(e)}</small>`:e.area?`<small>${Tu(e.area)}</small>`:``}</span>
           <span class="li-len">${e.lengthMi}<small>mi</small></span>
-        </li>`;if(this.plansOn&&!t.length){let e=n.filter(e=>e.plan),t=n.filter(e=>!e.plan);this.list.innerHTML=(e.length?`<li class="section">Planned · ${e.length}</li>${e.map(r).join(``)}`:``)+`<li class="section">On the ground today · ${t.length}</li>${t.map(r).join(``)}`;return}this.list.innerHTML=n.map(r).join(``)}highlightActive(){this.list.querySelectorAll(`li`).forEach((e,t)=>e.classList.toggle(`active`,t===this.active)),this.list.querySelectorAll(`li`)[this.active]?.scrollIntoView({block:`nearest`})}showTrail(e){
+        </li>`;if(this.plansOn&&!t.length){let e=n.filter(e=>e.plan),t=n.filter(e=>!e.plan);this.list.innerHTML=(e.length?`<li class="section">Planned · ${e.length}</li>${e.map(r).join(``)}`:``)+`<li class="section">On the ground today · ${t.length}</li>${t.map(r).join(``)}`;return}this._renderQueue=n;
+  this._renderIdx=0;
+  this.list.scrollTop=0;
+  let renderBatch=()=>{
+    let count=Math.min(50,this._renderQueue.length-this._renderIdx);
+    if(count<=0)return;
+    let slice=this._renderQueue.slice(this._renderIdx,this._renderIdx+count);
+    this._renderIdx+=count;
+    let html=slice.map(r).join(``);
+    if(this._renderIdx===count){
+      this.list.innerHTML=html;
+    }else{
+      this.list.insertAdjacentHTML('beforeend',html);
+    }
+  };
+  renderBatch();
+  if(!this._scrollBound){
+    this._scrollBound=!0;
+    this.list.addEventListener('scroll',()=>{
+      if(this.list.scrollTop+this.list.clientHeight>=this.list.scrollHeight-350){
+        if(this._renderQueue&&this._renderIdx<this._renderQueue.length){
+          renderBatch();
+        }
+      }
+    },{passive:!0});
+  }
+}highlightActive(){this.list.querySelectorAll(`li`).forEach((e,t)=>e.classList.toggle(`active`,t===this.active)),this.list.querySelectorAll(`li`)[this.active]?.scrollIntoView({block:`nearest`})}showTrail(e){
   let pnl = wu('#panel');
   if (window.innerWidth <= 768 && pnl) {
     pnl.hidden = Boolean(e);
@@ -5239,7 +5307,7 @@ showPlan(e){let t=e.plan,n=yu(e),r=(e,t)=>`<span class="chip ${e}">${t}</span>`,
     '<figcaption><span>' + p(i) + ' &rarr; ' + p(a) + '</span>' + f + '<span>' + totalMi + ' mi</span></figcaption>' +
   '</figure>';
 }
-var ju=1200,Mu=.98,Nu=1.2;async function Pu(){let n=document.getElementById(`scene`),r=document.getElementById(`loading`),{map:i,trails:a,trailheads:o,terrain:s}=await Sl(),c=new Jc({canvas:n,antialias:!1});c.setPixelRatio(Math.min(window.devicePixelRatio,2)),c.outputColorSpace=Le;let l=new kn;l.background=new Z(.965,.937,.878);let u=new ea(-1,1,1,-1,1,6e3),d=new al(u,n);d.enableDamping=!0,d.dampingFactor=.12,d.screenSpacePanning=!1,d.zoomToCursor=!0,d.minZoom=.4,d.maxZoom=40,d.minPolarAngle=.7,d.maxPolarAngle=1.2,d.zoomSpeed=1.4,d.mouseButtons={LEFT:e.PAN,MIDDLE:e.DOLLY,RIGHT:e.ROTATE},d.touches={ONE:t.PAN,TWO:t.DOLLY_ROTATE};let f=Ll(s);l.add(f.group);let p=new Cu(a,s);l.add(p.group);let m=new wl(document.getElementById(`labels`),s,o),h=new Ut(1,1,{samples:4,type:v}),g=new Ci({vertexShader:Nl,fragmentShader:Pl,uniforms:{tColor:{value:h.texture},uResolution:{value:new q},uPixelRatio:{value:c.getPixelRatio()}},depthTest:!1,depthWrite:!1}),_=new kn;_.add(new Xr(new fi(2,2),g));let y=new ea(-1,1,1,-1,0,1),b=0,x=0;function S(){b=window.innerWidth,x=window.innerHeight,c.setSize(b,x,!1);let e=c.getPixelRatio();h.setSize(b*e,x*e),g.uniforms.uResolution.value.set(b*e,x*e);let t=b/x;u.left=-ju*t/2,u.right=ju*t/2,u.top=ju/2,u.bottom=-ju/2,u.updateProjectionMatrix(),p.setResolution(b*e,x*e),L=!0}let C=2e3;function w(e,t,n){u.position.set(n.x+C*Math.sin(t)*Math.sin(e),n.y+C*Math.cos(t),n.z+C*Math.sin(t)*Math.cos(e)),d.target.copy(n),u.lookAt(n)}let T=null;function E(e,t=1100){let n={target:d.target.clone(),zoom:u.zoom,azimuth:d.getAzimuthalAngle(),polar:d.getPolarAngle()},r=e.azimuth??n.azimuth;for(;r-n.azimuth>Math.PI;)r-=Math.PI*2;for(;r-n.azimuth<-Math.PI;)r+=Math.PI*2;T={start:performance.now(),duration:t,from:n,to:{target:e.target??n.target,zoom:e.zoom??n.zoom,azimuth:r,polar:e.polar??n.polar}}}function D(e){if(!T)return;let t=Math.min(1,(e-T.start)/T.duration),n=t<.5?4*t*t*t:1-(-2*t+2)**3/2,{from:r,to:i}=T,a=Math.sin(Math.PI*n)*.22,o=Math.exp(Ct.lerp(Math.log(r.zoom),Math.log(i.zoom),n)-a*Math.abs(Math.log(i.zoom/r.zoom)+.3));u.zoom=o,u.updateProjectionMatrix(),w(Ct.lerp(r.azimuth,i.azimuth,n),Ct.lerp(r.polar,i.polar,n),r.target.clone().lerp(i.target,n)),t>=1&&(T=null),L=!0}function O(e, t = null, n = T ? T.to.azimuth : d.getAzimuthalAngle(), r = T ? T.to.polar : d.getPolarAngle()) {
+var ju=1200,Mu=.98,Nu=1.2;async function Pu(){let n=document.getElementById(`scene`),r=document.getElementById(`loading`),{map:i,trails:a,trailheads:o,terrain:s}=await Sl(),c=new Jc({canvas:n,antialias:!1});let isMob=window.innerWidth<=768;c.setPixelRatio(Math.min(window.devicePixelRatio,isMob?1.5:1.75)),c.outputColorSpace=Le;let l=new kn;l.background=new Z(.965,.937,.878);let u=new ea(-1,1,1,-1,1,6e3),d=new al(u,n);d.enableDamping=!0,d.dampingFactor=.12,d.screenSpacePanning=!1,d.zoomToCursor=!0,d.minZoom=.4,d.maxZoom=40,d.minPolarAngle=.7,d.maxPolarAngle=1.2,d.zoomSpeed=1.4,d.mouseButtons={LEFT:e.PAN,MIDDLE:e.DOLLY,RIGHT:e.ROTATE},d.touches={ONE:t.PAN,TWO:t.DOLLY_ROTATE};let f=Ll(s);l.add(f.group);let p=new Cu(a,s);l.add(p.group);let m=new wl(document.getElementById(`labels`),s,o),h=new Ut(1,1,{samples:isMob?1:2,type:v}),g=new Ci({vertexShader:Nl,fragmentShader:Pl,uniforms:{tColor:{value:h.texture},uResolution:{value:new q},uPixelRatio:{value:c.getPixelRatio()}},depthTest:!1,depthWrite:!1}),_=new kn;_.add(new Xr(new fi(2,2),g));let y=new ea(-1,1,1,-1,0,1),b=0,x=0;function S(){b=window.innerWidth,x=window.innerHeight,c.setSize(b,x,!1);let e=c.getPixelRatio();h.setSize(b*e,x*e),g.uniforms.uResolution.value.set(b*e,x*e);let t=b/x;u.left=-ju*t/2,u.right=ju*t/2,u.top=ju/2,u.bottom=-ju/2,u.updateProjectionMatrix(),p.setResolution(b*e,x*e),L=!0}let C=2e3;function w(e,t,n){u.position.set(n.x+C*Math.sin(t)*Math.sin(e),n.y+C*Math.cos(t),n.z+C*Math.sin(t)*Math.cos(e)),d.target.copy(n),u.lookAt(n)}let T=null;function E(e,t=1100){let n={target:d.target.clone(),zoom:u.zoom,azimuth:d.getAzimuthalAngle(),polar:d.getPolarAngle()},r=e.azimuth??n.azimuth;for(;r-n.azimuth>Math.PI;)r-=Math.PI*2;for(;r-n.azimuth<-Math.PI;)r+=Math.PI*2;T={start:performance.now(),duration:t,from:n,to:{target:e.target??n.target,zoom:e.zoom??n.zoom,azimuth:r,polar:e.polar??n.polar}}}function D(e){if(!T)return;let t=Math.min(1,(e-T.start)/T.duration),n=t<.5?4*t*t*t:1-(-2*t+2)**3/2,{from:r,to:i}=T,a=Math.sin(Math.PI*n)*.22,o=Math.exp(Ct.lerp(Math.log(r.zoom),Math.log(i.zoom),n)-a*Math.abs(Math.log(i.zoom/r.zoom)+.3));u.zoom=o,u.updateProjectionMatrix(),w(Ct.lerp(r.azimuth,i.azimuth,n),Ct.lerp(r.polar,i.polar,n),r.target.clone().lerp(i.target,n)),t>=1&&(T=null),L=!0}function O(e, t = null, n = T ? T.to.azimuth : d.getAzimuthalAngle(), r = T ? T.to.polar : d.getPolarAngle()) {
   let isMobile = b <= 768;
   let isOverview = Array.isArray(e);
   if (!t) {
@@ -5303,4 +5371,4 @@ function A(){
     O(k, { left: 360, right: 100, top: 40, bottom: 60 }, Nu, Mu);
   }
 }
-function j(e){let t=T?T.to.azimuth:d.getAzimuthalAngle();E({azimuth:Math.round((t+e*Math.PI/2-Nu)/(Math.PI/2))*(Math.PI/2)+Nu},900)}function ee(e){let t=T?T.to.zoom:u.zoom;E({zoom:Ct.clamp(t*e,d.minZoom,d.maxZoom)},450)}let te=null,M=null,N=0,P=0,ne=new Du(a,{onSelect:(e,t)=>F(e,t),onHover:e=>re(e),onFilter:e=>{p.filter=e,p.rebuildBase(),L=!0},onPlans:e=>{p.plans=e,p.rebuildBase(),m.showTrailheads=e.size>0,te!==null&&!p.matches(a[te])&&F(null),L=!0},matches:e=>p.matches(e),onHome:A,onRotate:j,onZoom:ee});function F(e,t={}){te=e,p.setSelected(e),ne.showTrail(e===null?null:a[e]),P=e===null?0:1,e!==null&&t.fly!==!1&&O(p.bounds(e)),L=!0}function re(e){e!==M&&(M=e,p.setHover(e===te?null:e),n.style.cursor=e===null?``:`pointer`,L=!0)}let ie=document.getElementById(`tooltip`),ae=null,oe=null;n.addEventListener(`pointerdown`,e=>{ae={x:e.clientX,y:e.clientY,t:performance.now()},T=null}),n.addEventListener(`pointermove`,e=>{if(oe={x:e.clientX,y:e.clientY},e.buttons){ie.classList.remove(`visible`);return}se=!0}),n.addEventListener(`pointerleave`,()=>{oe=null,re(null),ie.classList.remove(`visible`)}),n.addEventListener(`pointerup`,e=>{if(ae){if(Math.hypot(e.clientX-ae.x,e.clientY-ae.y)<15&&e.button===0){let t=p.pick(u,e.clientX,e.clientY,b,x,10);t===null?te!==null&&F(null):F(t)}ae=null}});let se=!1;function I(){if(!se||!oe)return;se=!1;let e=p.pick(u,oe.x,oe.y,b,x,9);if(re(e),e!==null){let t=a[e],n=t.plan?`planned: ${ku(t)}`:t.bike?`hike & bike`:`hike only`;ie.innerHTML=`<strong>${t.name}</strong><span>${t.lengthMi} mi · ${n}</span>`,ie.style.transform=`translate(${oe.x+16}px, ${oe.y+14}px)`,ie.classList.add(`visible`)}else ie.classList.remove(`visible`)}window.addEventListener(`keydown`,e=>{e.target.tagName!==`INPUT`&&((e.key===`q`||e.key===`Q`)&&j(-1),(e.key===`e`||e.key===`E`)&&j(1),(e.key===`=`||e.key===`+`)&&ee(1.5),(e.key===`-`||e.key===`_`)&&ee(1/1.5),(e.key===`h`||e.key===`H`)&&A(),e.key===`Escape`&&F(null))});let L=!0;d.addEventListener(`change`,()=>{L=!0,se=!0});let ce=document.getElementById(`compass-needle`);function le(e){requestAnimationFrame(le),D(e),T||d.update();let t=d.target,n=Ct.clamp(t.x,-i.widthM/200,i.widthM/200),r=Ct.clamp(t.z,-i.heightM/200,i.heightM/200);(n!==t.x||r!==t.z)&&(u.position.x+=n-t.x,u.position.z+=r-t.z,t.x=n,t.z=r);let a=N+(P-N)*.12;Math.abs(a-N)>.001&&(N=a,f.focusUniform.value=N*.45,L=!0),I(),L&&(L=!1,p.setPixelsPerUnit(x/ju*u.zoom),c.setRenderTarget(h),c.render(l,u),c.setRenderTarget(null),c.render(_,y),m.update(u,b,x),ce.style.transform=`rotate(${d.getAzimuthalAngle()*180/Math.PI}deg)`)}window.addEventListener(`resize`,S),S(); let initZ = b <= 768 ? .38 : .7; u.zoom = initZ; u.updateProjectionMatrix(); w(Nu, Mu, new J(0, 0, 0)); requestAnimationFrame(le); if (r) { r.classList.add('done'); setTimeout(() => r.style.display = 'none', 700); }; setTimeout(A, 150);let ue=location.hash.match(/^#(trail|plan)=(.+)$/);if(ue){let e=decodeURIComponent(ue[2]).toLowerCase(),t=ue[1]===`plan`,n=a.find(n=>!!n.plan===t&&n.name.toLowerCase()===e);n&&(t&&ne.setPlans(!0,yu(n)),setTimeout(()=>F(n.id),1300))}}Pu().catch(e=>{console.error(e);let el=document.getElementById(`loading`);if(el){el.innerHTML=`<p style="color:#c92f7b;padding:20px;">Error loading map: `+e.message+`</p>`;}});
+function j(e){let t=T?T.to.azimuth:d.getAzimuthalAngle();E({azimuth:Math.round((t+e*Math.PI/2-Nu)/(Math.PI/2))*(Math.PI/2)+Nu},900)}function ee(e){let t=T?T.to.zoom:u.zoom;E({zoom:Ct.clamp(t*e,d.minZoom,d.maxZoom)},450)}let te=null,M=null,N=0,P=0,ne=new Du(a,{onSelect:(e,t)=>F(e,t),onHover:e=>re(e),onFilter:e=>{p.filter=e,p.rebuildBase(),L=!0},onPlans:e=>{p.plans=e,p.rebuildBase(),m.showTrailheads=e.size>0,te!==null&&!p.matches(a[te])&&F(null),L=!0},matches:e=>p.matches(e),onHome:A,onRotate:j,onZoom:ee});function F(e,t={}){te=e,p.setSelected(e),ne.showTrail(e===null?null:a[e]),P=e===null?0:1,e!==null&&t.fly!==!1&&O(p.bounds(e)),L=!0}function re(e){e!==M&&(M=e,p.setHover(e===te?null:e),n.style.cursor=e===null?``:`pointer`,L=!0)}let ie=document.getElementById(`tooltip`),ae=null,oe=null;n.addEventListener(`pointerdown`,e=>{ae={x:e.clientX,y:e.clientY,t:performance.now()},T=null});let lastPickT=0;n.addEventListener(`pointermove`,e=>{oe={x:e.clientX,y:e.clientY};if(e.buttons){ie.classList.remove(`visible`);se=!1;return;}let now=performance.now();if(now-lastPickT>32){lastPickT=now;se=!0;}}),n.addEventListener(`pointerleave`,()=>{oe=null,re(null),ie.classList.remove(`visible`)}),n.addEventListener(`pointerup`,e=>{if(ae){if(Math.hypot(e.clientX-ae.x,e.clientY-ae.y)<15&&e.button===0){let t=p.pick(u,e.clientX,e.clientY,b,x,10);t===null?te!==null&&F(null):F(t)}ae=null}});let se=!1;function I(){if(!se||!oe)return;se=!1;let e=p.pick(u,oe.x,oe.y,b,x,9);if(re(e),e!==null){let t=a[e],n=t.plan?`planned: ${ku(t)}`:t.bike?`hike & bike`:`hike only`;ie.innerHTML=`<strong>${t.name}</strong><span>${t.lengthMi} mi · ${n}</span>`,ie.style.transform=`translate(${oe.x+16}px, ${oe.y+14}px)`,ie.classList.add(`visible`)}else ie.classList.remove(`visible`)}window.addEventListener(`keydown`,e=>{e.target.tagName!==`INPUT`&&((e.key===`q`||e.key===`Q`)&&j(-1),(e.key===`e`||e.key===`E`)&&j(1),(e.key===`=`||e.key===`+`)&&ee(1.5),(e.key===`-`||e.key===`_`)&&ee(1/1.5),(e.key===`h`||e.key===`H`)&&A(),e.key===`Escape`&&F(null))});let L=!0;d.addEventListener(`change`,()=>{L=!0});let ce=document.getElementById(`compass-needle`);function le(e){requestAnimationFrame(le),D(e),T||d.update();let t=d.target,n=Ct.clamp(t.x,-i.widthM/200,i.widthM/200),r=Ct.clamp(t.z,-i.heightM/200,i.heightM/200);(n!==t.x||r!==t.z)&&(u.position.x+=n-t.x,u.position.z+=r-t.z,t.x=n,t.z=r);let a=N+(P-N)*.12;Math.abs(a-N)>.001&&(N=a,f.focusUniform.value=N*.45,L=!0),I(),L&&(L=!1,p.setPixelsPerUnit(x/ju*u.zoom),c.setRenderTarget(h),c.render(l,u),c.setRenderTarget(null),c.render(_,y),m.update(u,b,x),ce.style.transform=`rotate(${d.getAzimuthalAngle()*180/Math.PI}deg)`)}window.addEventListener(`resize`,S),S(); let initZ = b <= 768 ? .38 : .7; u.zoom = initZ; u.updateProjectionMatrix(); w(Nu, Mu, new J(0, 0, 0)); requestAnimationFrame(le); if (r) { r.classList.add('done'); setTimeout(() => r.style.display = 'none', 700); }; setTimeout(A, 150);let ue=location.hash.match(/^#(trail|plan)=(.+)$/);if(ue){let e=decodeURIComponent(ue[2]).toLowerCase(),t=ue[1]===`plan`,n=a.find(n=>!!n.plan===t&&n.name.toLowerCase()===e);n&&(t&&ne.setPlans(!0,yu(n)),setTimeout(()=>F(n.id),1300))}}Pu().catch(e=>{console.error(e);let el=document.getElementById(`loading`);if(el){el.innerHTML=`<p style="color:#c92f7b;padding:20px;">Error loading map: `+e.message+`</p>`;}});
