@@ -4949,9 +4949,10 @@ class AmbienceManager {
     this.vNext = new J();
     this.boatCenterLon = -122.33;
     this.boatCenterLat = 37.73;
+    this.lastHeading = 0;
     this.flightWaypoints = [
-      { lon: -122.82, lat: 38.05 },
-      { lon: -122.50, lat: 37.85 },
+      { lon: -122.85, lat: 38.08 },
+      { lon: -122.52, lat: 37.86 },
       { lon: -122.38, lat: 37.78 },
       { lon: -122.25, lat: 37.66 },
       { lon: -122.06, lat: 37.42 },
@@ -4959,45 +4960,34 @@ class AmbienceManager {
       { lon: -121.96, lat: 37.10 },
       { lon: -122.05, lat: 36.96 },
       { lon: -122.45, lat: 37.15 },
-      { lon: -122.80, lat: 37.65 }
+      { lon: -122.82, lat: 37.65 }
     ];
   }
   update(cam, vpW, vpH, timeMs) {
     let wl = document.getElementById("wildlife-layer");
     if (!wl || wl.classList.contains("wildlife-hidden")) return;
 
-    // 1. UPDATE SAILBOAT (Strictly anchored to 3D water surface!)
+    // 1. UPDATE SAILBOAT (Strictly on 3D water surface, ALWAYS HORIZONTAL / LEVEL, NO ROTATION!)
     if (this.boatEl) {
-      let tBoat = ((timeMs || 0) * 0.000045) % 1;
+      let tBoat = ((timeMs || 0) * 0.000028) % 1;
       let angle = tBoat * Math.PI * 2;
       let ca = Math.cos(angle), sa = Math.sin(angle);
       let dLon = ca * 0.038 - sa * 0.022;
       let dLat = ca * 0.022 + sa * 0.052;
       let lon = this.boatCenterLon + dLon;
       let lat = this.boatCenterLat + dLat;
-      let nextAngle = angle + 0.06;
-      let nca = Math.cos(nextAngle), nsa = Math.sin(nextAngle);
-      let nLon = this.boatCenterLon + (nca * 0.038 - nsa * 0.022);
-      let nLat = this.boatCenterLat + (nca * 0.022 + nsa * 0.052);
       let x = ((lon - this.map.bbox.west) / (this.map.bbox.east - this.map.bbox.west)) * this.map.widthM;
       let y = ((lat - this.map.bbox.south) / (this.map.bbox.north - this.map.bbox.south)) * this.map.heightM;
-      let nx = ((nLon - this.map.bbox.west) / (this.map.bbox.east - this.map.bbox.west)) * this.map.widthM;
-      let ny = ((nLat - this.map.bbox.south) / (this.map.bbox.north - this.map.bbox.south)) * this.map.heightM;
       let [wx, wy, wz] = xl(this.map, x, y, 1.2);
-      let [nwx, nwy, nwz] = xl(this.map, nx, ny, 1.2);
       this.v.set(wx, wy, wz).project(cam);
-      this.vNext.set(nwx, nwy, nwz).project(cam);
       if (this.v.z >= -1 && this.v.z <= 1) {
         let sx = (this.v.x + 1) / 2 * vpW;
         let sy = (1 - this.v.y) / 2 * vpH;
-        let nsx = (this.vNext.x + 1) / 2 * vpW;
-        let nsy = (1 - this.vNext.y) / 2 * vpH;
-        let headingRad = Math.atan2(nsy - sy, nsx - sx);
-        let headingDeg = headingRad * (180 / Math.PI) - 90;
         let inScreen = sx > -50 && sx < vpW + 50 && sy > -50 && sy < vpH + 50;
         if (inScreen) {
           this.boatEl.style.display = "block";
-          this.boatEl.style.transform = "translate(" + Math.round(sx) + "px, " + Math.round(sy) + "px) rotate(" + Math.round(headingDeg) + "deg)";
+          // KEEP BOAT STRICTLY HORIZONTAL AND LEVEL - NO ROTATE!
+          this.boatEl.style.transform = "translate3d(" + sx.toFixed(1) + "px, " + sy.toFixed(1) + "px, 0px)";
         } else {
           this.boatEl.style.display = "none";
         }
@@ -5006,11 +4996,12 @@ class AmbienceManager {
       }
     }
 
-    // 2. UPDATE AIRPLANE (Flying in 3D sky airspace across Bay Area!)
+    // 2. UPDATE AIRPLANE (Fly very slowly, nose forward, silky smooth subpixel rendering!)
     if (this.planeEl) {
       let pts = this.flightWaypoints;
       let totalPts = pts.length;
-      let tPlane = (((timeMs || 0) * 0.000065) % 1) * totalPts;
+      // Very slow majestic flight speed (~150 seconds per full circuit across Bay Area)
+      let tPlane = (((timeMs || 0) * 0.0000075) % 1) * totalPts;
       let idx = Math.floor(tPlane);
       let frac = tPlane - idx;
       let p0 = pts[(idx - 1 + totalPts) % totalPts];
@@ -5019,7 +5010,7 @@ class AmbienceManager {
       let p3 = pts[(idx + 2) % totalPts];
       let lon = catmullRom(p0.lon, p1.lon, p2.lon, p3.lon, frac);
       let lat = catmullRom(p0.lat, p1.lat, p2.lat, p3.lat, frac);
-      let fracNext = Math.min(1.0, frac + 0.035);
+      let fracNext = Math.min(1.0, frac + 0.02);
       let nLon = catmullRom(p0.lon, p1.lon, p2.lon, p3.lon, fracNext);
       let nLat = catmullRom(p0.lat, p1.lat, p2.lat, p3.lat, fracNext);
       let px = ((lon - this.map.bbox.west) / (this.map.bbox.east - this.map.bbox.west)) * this.map.widthM;
@@ -5036,12 +5027,15 @@ class AmbienceManager {
         let sy = (1 - this.v.y) / 2 * vpH;
         let nsx = (this.vNext.x + 1) / 2 * vpW;
         let nsy = (1 - this.vNext.y) / 2 * vpH;
+        // Tangent angle in screen space: +90deg aligns SVG nose (at top of SVG) with flight forward vector
         let headingRad = Math.atan2(nsy - sy, nsx - sx);
-        let headingDeg = headingRad * (180 / Math.PI) - 90;
+        let targetDeg = headingRad * (180 / Math.PI) + 90;
+        let diff = (targetDeg - this.lastHeading + 540) % 360 - 180;
+        this.lastHeading = this.lastHeading + diff * 0.15;
         let inScreen = sx > -80 && sx < vpW + 80 && sy > -80 && sy < vpH + 80;
         if (inScreen) {
           this.planeEl.style.display = "block";
-          this.planeEl.style.transform = "translate(" + Math.round(sx) + "px, " + Math.round(sy) + "px) rotate(" + Math.round(headingDeg) + "deg)";
+          this.planeEl.style.transform = "translate3d(" + sx.toFixed(1) + "px, " + sy.toFixed(1) + "px, 0px) rotate(" + this.lastHeading.toFixed(1) + "deg)";
         } else {
           this.planeEl.style.display = "none";
         }
@@ -5051,7 +5045,6 @@ class AmbienceManager {
     }
   }
 };
-
 class CampsiteManager {
   constructor(campsites, mapData, onSelect) {
     this.campsites = campsites || [];
