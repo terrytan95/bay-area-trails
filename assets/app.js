@@ -4949,20 +4949,30 @@ class CampsiteManager {
       let el = document.createElement('div');
       el.className = 'label-campsite';
       el.setAttribute('data-id', c.id);
-      el.innerHTML = '<div class="tent-badge" title="' + Tu(c.name) + ' (' + Tu(c.park) + ')">' +
-        '<svg viewBox="0 0 28 28" width="22" height="22" class="tent-svg">' +
-          '<path d="M14 4 L25 24 L3 24 Z" fill="#d95f38" stroke="#7c2d12" stroke-width="1.2" stroke-linejoin="round"/>' +
-          '<path d="M14 4 L3 24 L14 24 Z" fill="#b91c1c" opacity="0.35"/>' +
-          '<polygon points="14,10 18.5,24 9.5,24" fill="#fef08a"/>' +
-          '<polygon points="14,12 17.5,24 10.5,24" fill="#fde047"/>' +
-          '<line x1="14" y1="10" x2="9.5" y2="24" stroke="#7c2d12" stroke-width="1"/>' +
-          '<line x1="14" y1="10" x2="18.5" y2="24" stroke="#7c2d12" stroke-width="1"/>' +
-          '<line x1="14" y1="4" x2="1" y2="25" stroke="#78350f" stroke-width="0.8" stroke-dasharray="1.5,1"/>' +
-          '<line x1="14" y1="4" x2="27" y2="25" stroke="#78350f" stroke-width="0.8" stroke-dasharray="1.5,1"/>' +
-          '<circle cx="14" cy="4.2" r="1.5" fill="#f59e0b"/>' +
+      el.innerHTML = '<div class="tent-icon-wrap" aria-label="' + Tu(c.name) + '">' +
+        '<svg viewBox="0 0 28 28" width="28" height="28" class="tent-svg">' +
+          '<defs>' +
+            '<filter id="ts-' + c.id + '" x="-25%" y="-25%" width="150%" height="150%">' +
+              '<feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#2a160c" flood-opacity="0.38"/>' +
+            '</filter>' +
+          '</defs>' +
+          '<g filter="url(#ts-' + c.id + ')">' +
+            '<path d="M14 3 L26 25 L2 25 Z" fill="#d95f38" stroke="#7c2d12" stroke-width="1.2" stroke-linejoin="round"/>' +
+            '<path d="M14 3 L2 25 L14 25 Z" fill="#b91c1c" opacity="0.38"/>' +
+            '<polygon points="14,9 19,25 9,25" fill="#fef08a"/>' +
+            '<polygon points="14,11 18,25 10,25" fill="#fde047"/>' +
+            '<line x1="14" y1="9" x2="9" y2="25" stroke="#7c2d12" stroke-width="1"/>' +
+            '<line x1="14" y1="9" x2="19" y2="25" stroke="#7c2d12" stroke-width="1"/>' +
+            '<line x1="14" y1="3" x2="0" y2="26" stroke="#78350f" stroke-width="0.9" stroke-dasharray="1.5,1"/>' +
+            '<line x1="14" y1="3" x2="28" y2="26" stroke="#78350f" stroke-width="0.9" stroke-dasharray="1.5,1"/>' +
+            '<circle cx="14" cy="3.5" r="1.5" fill="#f59e0b"/>' +
+          '</g>' +
         '</svg>' +
       '</div>' +
-      '<span class="camp-pill">' + Tu(c.name) + '</span>';
+      '<div class="camp-hover-tooltip">' +
+        '<div class="camp-tooltip-name">' + Tu(c.name) + '</div>' +
+        '<div class="camp-tooltip-park">' + Tu(c.park) + ' · ' + Tu(c.county) + '</div>' +
+      '</div>';
       el.addEventListener('click', (ev) => {
         ev.stopPropagation();
         this.onSelect(c);
@@ -4975,15 +4985,9 @@ class CampsiteManager {
         el,
         world: new J(wx, wy, wz),
         v: new J(),
-        w: 0,
-        h: 0
+        w: 30,
+        h: 30
       };
-    });
-    requestAnimationFrame(() => {
-      for (let item of this.items) {
-        item.w = item.el.offsetWidth || 130;
-        item.h = item.el.offsetHeight || 28;
-      }
     });
   }
   setVisible(v) {
@@ -4993,7 +4997,6 @@ class CampsiteManager {
   update(cam, vpW, vpH) {
     if (!this.visible) return;
     let occ = [];
-    let zoom = cam.zoom || 1;
     let count = 0;
     for (let item of this.items) {
       item.v.copy(item.world).project(cam);
@@ -5003,14 +5006,12 @@ class CampsiteManager {
       }
       let sx = (item.v.x + 1) / 2 * vpW;
       let sy = (1 - item.v.y) / 2 * vpH;
-      let w = item.w || 130;
-      let h = item.h || 28;
-      let left = sx - 15;
-      let top = sy - 25;
-      let inBounds = sx > -40 && sx < vpW + 40 && sy > -40 && sy < vpH + 40;
-      let box = [left - 3, top - 2, left + w + 3, top + h + 2];
+      let left = sx - 14;
+      let top = sy - 28;
+      let inBounds = sx > -30 && sx < vpW + 30 && sy > -30 && sy < vpH + 30;
+      let box = [left - 3, top - 3, left + 31, top + 31];
       let overlaps = occ.some(b => b[0] < box[2] && b[2] > box[0] && b[1] < box[3] && b[3] > box[1]);
-      if (inBounds && (!overlaps || count < 8)) {
+      if (inBounds && (!overlaps || count < 18)) {
         occ.push(box);
         count++;
         item.el.style.transform = 'translate(' + Math.round(left) + 'px, ' + Math.round(top) + 'px)';
@@ -5021,7 +5022,6 @@ class CampsiteManager {
     }
   }
 };
-
 var Du=class{trails;h;filter=`all`;plansOn=!1;planGroups=new Set([`new`,`decommission`]);query=``;results=[];active=-1;selected=null;list=wu(`#trail-list`);search=wu(`#search`);card=wu(`#card`);constructor(e,t){
 this.list.addEventListener('click', (ev) => {
   let li = ev.target.closest('li[data-camp-id]');
