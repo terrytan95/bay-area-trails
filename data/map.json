@@ -81,6 +81,18 @@
     [
       2640,
       153372
+    ],
+    [
+      89685,
+      1111
+    ],
+    [
+      96795,
+      1111
+    ],
+    [
+      109994,
+      1111
     ]
   ],
   "lakes": [],
@@ -440,10 +452,66 @@
       "x": 94155,
       "y": 26673,
       "area": 1800000
+    },
+    {
+      "kind": "peak",
+      "name": "Loma Prieta",
+      "x": 106061,
+      "y": 17871,
+      "ele": 1155
+    },
+    {
+      "kind": "village",
+      "name": "Henry Cowell Redwoods",
+      "x": 86675,
+      "y": 10003
+    },
+    {
+      "kind": "village",
+      "name": "Big Basin Redwoods",
+      "x": 72860,
+      "y": 24673
+    },
+    {
+      "kind": "village",
+      "name": "Capitola",
+      "x": 96531,
+      "y": 2778
+    },
+    {
+      "kind": "village",
+      "name": "Aptos",
+      "x": 100931,
+      "y": 3001
+    },
+    {
+      "kind": "village",
+      "name": "Felton",
+      "x": 85971,
+      "y": 11225
+    },
+    {
+      "kind": "town",
+      "name": "Scotts Valley",
+      "x": 91163,
+      "y": 11225
+    },
+    {
+      "kind": "village",
+      "name": "Wilder Ranch",
+      "x": 84916,
+      "y": 2223
+    },
+    {
+      "kind": "lake",
+      "name": "Monterey Bay",
+      "x": 92395,
+      "y": 556,
+      "area": 500000000
     }
   ],
   "attribution": [
-    "Trails © OpenStreetMap contributors (ODbL)",
+    "Trails \u00a9 OpenStreetMap contributors (ODbL)",
     "Bay Area Trails Collaborative (BATC) & Rails-to-Trails Conservancy",
     "East Bay Regional Park District (EBRPD)",
     "Santa Clara County Parks & Recreation",

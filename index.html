@@ -29,12 +29,13 @@
     />
     
     
-    <script type="module" crossorigin src="./assets/app.js?v=1790391595540"></script>
-    <link rel="stylesheet" crossorigin href="./assets/app.css?v=1790391595540">
+    <script type="module" crossorigin src="./assets/app.js?v=1790409507948"></script>
+    <link rel="stylesheet" crossorigin href="./assets/app.css?v=1790409507948">
   </head>
   <body>
     <canvas id="scene"></canvas>
     <div id="labels" aria-hidden="true"></div>
+    <div id="campsites-layer" aria-hidden="true"></div>
     <div id="tooltip" role="tooltip"></div>
 
     <div id="ambience-layer" aria-hidden="true">
@@ -136,6 +137,7 @@
         <button data-filter="all" class="on">All</button>
         <button data-filter="hike">🥾 Hike</button>
         <button data-filter="bike">🚵 Bike</button>
+        <button data-filter="camp" id="btn-filter-camp">⛺️ Camp</button>
         <span id="result-count"></span>
       </div>
       <div class="plan-toggle">
@@ -163,6 +165,7 @@
 
     <div id="legend">
       <div><span class="swatch bike"></span>Open to bikes &amp; hikers</div>
+      <div><span class="swatch camp">⛺️</span>Camping sites</div>
       <div><span class="swatch hike"></span>Foot traffic only</div>
       <div><span class="swatch basin"></span>San Francisco Bay Area</div>
     </div>
@@ -183,6 +186,7 @@
       <button id="btn-out" title="Zoom out (−)">−</button>
       <button id="btn-home" title="Reset view (H)">⌂</button>
       <button id="btn-fog" class="ambient-toggle on" title="Toggle Karl the Fog (F)" aria-label="Toggle Karl the Fog" aria-pressed="true">🌁</button>
+      <button id="btn-camp" class="ambient-toggle on" title="Toggle Camping Sites (C)" aria-label="Toggle Camping Sites" aria-pressed="true">⛺️</button>
       <button id="btn-wildlife" class="ambient-toggle on" title="Toggle Wildlife &amp; Sailboats (W)" aria-label="Toggle Wildlife" aria-pressed="true">🦅</button>
     </nav>
 
