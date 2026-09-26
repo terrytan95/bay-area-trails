@@ -4913,7 +4913,54 @@ function Vl(e){let t=new di(.22,.75,6,1);t.translate(0,.52,0);let n=new ui(.04,.
     p.classList.remove("minimized");
   }
 })
-  wu(`#search-clear`).addEventListener(`click`,()=>{this.search.value=``,this.query=``,this.render(),this.search.focus()});for(let e of document.querySelectorAll(`[data-filter]`))e.addEventListener(`click`,()=>{this.filter=e.dataset.filter,document.querySelectorAll(`[data-filter]`).forEach(t=>t.classList.toggle(`on`,t===e)),this.h.onFilter(this.filter),this.render()});wu(`#plan-btn`).addEventListener(`click`,()=>this.setPlans(!this.plansOn));for(let e of document.querySelectorAll(`[data-plan]`))e.addEventListener(`click`,()=>{let t=e.dataset.plan;this.planGroups.has(t)?this.planGroups.delete(t):this.planGroups.add(t),e.classList.toggle(`on`,this.planGroups.has(t)),this.h.onPlans(new Set(this.planGroups)),this.render()});this.list.addEventListener(`click`,e=>{let t=e.target.closest(`[data-id]`);t&&this.h.onSelect(Number(t.dataset.id))}),this.list.addEventListener(`mouseover`,e=>{let t=e.target.closest(`[data-id]`);this.h.onHover(t?Number(t.dataset.id):null)}),this.list.addEventListener(`mouseleave`,()=>this.h.onHover(null)),wu(`#btn-home`).addEventListener(`click`,()=>this.h.onHome()),wu(`#btn-left`).addEventListener(`click`,()=>this.h.onRotate(-1)),wu(`#btn-right`).addEventListener(`click`,()=>this.h.onRotate(1)),wu(`#btn-in`).addEventListener(`click`,()=>this.h.onZoom(1.6)),wu(`#btn-out`).addEventListener(`click`,()=>this.h.onZoom(1/1.6));let n=e.filter(e=>!e.plan),r=n.reduce((e,t)=>e+t.lengthMi,0);wu(`#stats`).textContent=`${n.length} trails · ${Math.round(r).toLocaleString()} miles`,this.render()}setPlans(e,t){t&&(this.planGroups.add(t),document.querySelector(`[data-plan="${t}"]`)?.classList.add(`on`)),this.plansOn=e,wu(`#plan-btn`).setAttribute(`aria-pressed`,String(e)),wu(`#plan-btn`).closest(`.plan-toggle`).classList.toggle(`on`,e),wu(`#plan-groups`).hidden=!e,wu(`#legend`).hidden=e,wu(`#legend-plan`).hidden=!e,this.h.onPlans(e?new Set(this.planGroups):new Set),this.render()}render(){let e=Eu(this.query),t=e.split(` `).filter(Boolean),n=this.trails.filter(e=>this.h.matches(e));if(t.length&&(n=n.map(n=>{let r=Eu(`${n.name} ${n.area??``}`);if(!t.every(e=>r.includes(e)))return null;let i=Eu(n.name);return{t:n,score:(i.startsWith(e)?0:i.split(` `).some(e=>e.startsWith(t[0]))?1:2)-n.lengthMi/1e3}}).filter(e=>e!==null).sort((e,t)=>e.score-t.score).map(e=>e.t)),this.results=n,wu(`#search-clear`).hidden=!this.query,wu(`#result-count`).textContent=t.length?`${n.length} match${n.length===1?``:`es`}`:`${n.length} trails`,!n.length){this.list.innerHTML=`<li class="empty">No trails match “${Tu(this.query)}”. Try a shorter word?</li>`;return}let r=e=>`<li data-id="${e.id}" class="${e.id===this.selected?`selected`:``}">
+  wu(`#search-clear`).addEventListener(`click`,()=>{this.search.value=``,this.query=``,this.render(),this.search.focus()});for(let e of document.querySelectorAll(`[data-filter]`))e.addEventListener(`click`,()=>{this.filter=e.dataset.filter,document.querySelectorAll(`[data-filter]`).forEach(t=>t.classList.toggle(`on`,t===e)),this.h.onFilter(this.filter),this.render()});wu(`#plan-btn`).addEventListener(`click`,()=>this.setPlans(!this.plansOn));for(let e of document.querySelectorAll(`[data-plan]`))e.addEventListener(`click`,()=>{let t=e.dataset.plan;this.planGroups.has(t)?this.planGroups.delete(t):this.planGroups.add(t),e.classList.toggle(`on`,this.planGroups.has(t)),this.h.onPlans(new Set(this.planGroups)),this.render()});this.list.addEventListener(`click`,e=>{let t=e.target.closest(`[data-id]`);t&&this.h.onSelect(Number(t.dataset.id))}),this.list.addEventListener(`mouseover`,e=>{let t=e.target.closest(`[data-id]`);this.h.onHover(t?Number(t.dataset.id):null)}),this.list.addEventListener(`mouseleave`,()=>this.h.onHover(null)),wu("#btn-home").addEventListener("click",()=>this.h.onHome());
+let showToast = (msg) => {
+  let t = wu("#map-toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add("visible");
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove("visible"), 2800);
+};
+let btnFog = wu("#btn-fog");
+if (btnFog) {
+  btnFog.addEventListener("click", () => {
+    let fog = wu("#fog-layer");
+    if (!fog) return;
+    let isHidden = fog.classList.toggle("fog-hidden");
+    btnFog.classList.toggle("on", !isHidden);
+    btnFog.setAttribute("aria-pressed", String(!isHidden));
+    showToast(!isHidden ? "Karl the Fog rolling across the Golden Gate \u{1F301}" : "Golden State sunshine over the Bay \u{2600}\u{FE0F}");
+  });
+}
+let btnWildlife = wu("#btn-wildlife");
+if (btnWildlife) {
+  btnWildlife.addEventListener("click", () => {
+    let wl = wu("#wildlife-layer");
+    if (!wl) return;
+    let isHidden = wl.classList.toggle("wildlife-hidden");
+    btnWildlife.classList.toggle("on", !isHidden);
+    btnWildlife.setAttribute("aria-pressed", String(!isHidden));
+    showToast(!isHidden ? "Red-tailed hawks & bay sailboats gliding \u{1F985}" : "Quiet skies & coastal breeze \u{1F332}");
+  });
+}
+let poppy = wu(".poppy-badge");
+if (poppy) {
+  poppy.addEventListener("click", () => {
+    poppy.style.transform = "scale(1.35) rotate(22deg)";
+    setTimeout(() => poppy.style.transform = "", 450);
+    showToast("California Golden Poppy \u2014 State Flower of California \u{1F33C}");
+  });
+}
+window.addEventListener("keydown", (ev) => {
+  if (["input", "textarea"].includes(document.activeElement?.tagName?.toLowerCase())) return;
+  if (ev.key === "f" || ev.key === "F") {
+    let b = wu("#btn-fog"); if (b) b.click();
+  } else if (ev.key === "w" || ev.key === "W") {
+    let b = wu("#btn-wildlife"); if (b) b.click();
+  }
+});
+wu(`#btn-left`).addEventListener(`click`,()=>this.h.onRotate(-1)),wu(`#btn-right`).addEventListener(`click`,()=>this.h.onRotate(1)),wu(`#btn-in`).addEventListener(`click`,()=>this.h.onZoom(1.6)),wu(`#btn-out`).addEventListener(`click`,()=>this.h.onZoom(1/1.6));let n=e.filter(e=>!e.plan),r=n.reduce((e,t)=>e+t.lengthMi,0);wu(`#stats`).textContent=`${n.length} trails · ${Math.round(r).toLocaleString()} miles`,this.render()}setPlans(e,t){t&&(this.planGroups.add(t),document.querySelector(`[data-plan="${t}"]`)?.classList.add(`on`)),this.plansOn=e,wu(`#plan-btn`).setAttribute(`aria-pressed`,String(e)),wu(`#plan-btn`).closest(`.plan-toggle`).classList.toggle(`on`,e),wu(`#plan-groups`).hidden=!e,wu(`#legend`).hidden=e,wu(`#legend-plan`).hidden=!e,this.h.onPlans(e?new Set(this.planGroups):new Set),this.render()}render(){let e=Eu(this.query),t=e.split(` `).filter(Boolean),n=this.trails.filter(e=>this.h.matches(e));if(t.length&&(n=n.map(n=>{let r=Eu(`${n.name} ${n.area??``}`);if(!t.every(e=>r.includes(e)))return null;let i=Eu(n.name);return{t:n,score:(i.startsWith(e)?0:i.split(` `).some(e=>e.startsWith(t[0]))?1:2)-n.lengthMi/1e3}}).filter(e=>e!==null).sort((e,t)=>e.score-t.score).map(e=>e.t)),this.results=n,wu(`#search-clear`).hidden=!this.query,wu(`#result-count`).textContent=t.length?`${n.length} match${n.length===1?``:`es`}`:`${n.length} trails`,!n.length){this.list.innerHTML=`<li class="empty">No trails match “${Tu(this.query)}”. Try a shorter word?</li>`;return}let r=e=>`<li data-id="${e.id}" class="${e.id===this.selected?`selected`:``}">
           ${Ou(e)}
           <span class="li-name">${Tu(e.name)}${e.plan?`<small class="plan-tag">${ku(e)}</small>`:e.area?`<small>${Tu(e.area)}</small>`:``}</span>
           <span class="li-len">${e.lengthMi}<small>mi</small></span>
@@ -4935,7 +4982,90 @@ if(this.selected=e?e.id:null,this.list.querySelectorAll(`li[data-id]`).forEach(t
       ${Au(e)}
       <dl>${n.filter(([,e])=>e).map(([e,t])=>`<dt>${e}</dt><dd>${t}</dd>`).join(``)}</dl>
       <button id="card-zoom" class="text-btn">↺ Zoom to trail</button>
-    `,this.openCard(e)}openCard(e){wu(`#card-close`).addEventListener(`click`,()=>this.h.onSelect(null)),wu(`#card-zoom`).addEventListener(`click`,()=>this.h.onSelect(e.id)),this.card.classList.add(`open`)}showPlan(e){let t=e.plan,n=yu(e),r=(e,t)=>`<span class="chip ${e}">${t}</span>`,i=``,a=``,o=null,s=`E-bikes April 1 – November 15`,c=`Motorcycles May 25 – November 15`;t.kind===`decommission`?(i=r(`nobike`,`✕ To be decommissioned`),a=`Trail to be closed and restored (often replaced by a reroute nearby)`):t.kind===`designate`?(i=t.mode===`moto`?r(`moto`,`🏍️ Opening to motorcycles`):r(`ebike`,`⚡ Opening to Class 1 e-bikes`)+r(`hike`,`🥾 Hiking`)+r(`bike`,`🚵 Bikes`),a=`Existing trail, new designation`,o=t.mode===`moto`?c:s):(t.mode===`moto`?i=r(`moto`,`🏍️ Motorcycles`):(i=r(`hike`,`🥾 Hiking`),t.mode!==`foot`&&(i+=r(`bike`,`🚵 Bikes`)),i+=t.mode===`ebike`?r(`ebike`,`⚡ Class 1 e-bikes`):r(`nobike`,t.mode===`foot`?`No bikes`:`No e-bikes`)),a=t.kind===`adopt`?`Existing user-made trail, adopted into the official system`:`New trail construction`,o=t.mode===`moto`?c:t.mode===`ebike`?s:null);let l=[[`Change`,a],[`Season`,o],[`Project note`,t.note?Tu(t.note.charAt(0).toUpperCase()+t.note.slice(1)):null],[`Elevation`,`${e.minFt.toLocaleString()}′ – ${e.maxFt.toLocaleString()}′`],[`Source`,`<a href="https://www.fs.usda.gov/r05/laketahoebasin/projects/54566" target="_blank" rel="noopener">USFS Basin Wide Trails Analysis</a>, decision signed Jan 9, 2026`]];this.card.innerHTML=`
+    `,this.openCard(e)}openCard(e){
+  wu("#card-close").addEventListener("click",()=>this.h.onSelect(null));
+  wu("#card-zoom").addEventListener("click",()=>this.h.onSelect(e.id));
+  this.card.classList.add("open");
+  let profile = this.card.querySelector(".profile");
+  if (profile) {
+    let svg = profile.querySelector(".profile-svg");
+    let line = profile.querySelector(".profile-line");
+    let traveler = profile.querySelector(".profile-traveler");
+    let scrubLine = profile.querySelector(".scrubber-line");
+    let scrubDot = profile.querySelector(".scrubber-dot");
+    let tooltip = profile.querySelector(".scrubber-tooltip");
+    let totalMi = parseFloat(profile.dataset.totalMi) || 1;
+    let minFt = parseFloat(profile.dataset.minFt) || 0;
+    let maxFt = parseFloat(profile.dataset.maxFt) || 1000;
+    let pathLen = 0;
+    try { pathLen = line.getTotalLength(); } catch (_) {}
+    if (pathLen > 0) {
+      let userInteracting = false;
+      let startTime = performance.now();
+      let duration = 6500;
+      let loop = (now) => {
+        if (!userInteracting && traveler) {
+          let elapsed = (now - startTime) % duration;
+          let pt = line.getPointAtLength((elapsed / duration) * pathLen);
+          traveler.setAttribute("transform", "translate(" + pt.x.toFixed(1) + "," + pt.y.toFixed(1) + ")");
+        }
+        if (this.card.classList.contains("open")) {
+          requestAnimationFrame(loop);
+        }
+      };
+      requestAnimationFrame(loop);
+      let updateScrub = (clientX) => {
+        let rect = svg.getBoundingClientRect();
+        if (rect.width <= 0) return;
+        let normX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        let targetX = normX * 320;
+        let low = 0, high = pathLen, bestPt = line.getPointAtLength(0);
+        for (let i = 0; i < 14; i++) {
+          let mid = (low + high) / 2;
+          let pt = line.getPointAtLength(mid);
+          if (Math.abs(pt.x - targetX) < Math.abs(bestPt.x - targetX)) bestPt = pt;
+          if (pt.x < targetX) low = mid; else high = mid;
+        }
+        userInteracting = true;
+        if (scrubLine) {
+          scrubLine.setAttribute("x1", bestPt.x.toFixed(1));
+          scrubLine.setAttribute("x2", bestPt.x.toFixed(1));
+          scrubLine.style.opacity = "0.9";
+        }
+        if (scrubDot) {
+          scrubDot.setAttribute("cx", bestPt.x.toFixed(1));
+          scrubDot.setAttribute("cy", bestPt.y.toFixed(1));
+          scrubDot.style.opacity = "1";
+        }
+        if (traveler) {
+          traveler.setAttribute("transform", "translate(" + bestPt.x.toFixed(1) + "," + bestPt.y.toFixed(1) + ")");
+        }
+        if (tooltip) {
+          let curMi = (normX * totalMi).toFixed(1);
+          let curEle = Math.round(minFt + Math.max(0, Math.min(1, (78 - bestPt.y) / 64)) * (maxFt - minFt));
+          tooltip.textContent = curMi + " mi � " + curEle.toLocaleString() + " 2";
+          tooltip.style.left = (bestPt.x / 320 * 100).toFixed(1) + "%";
+          tooltip.style.opacity = "1";
+        }
+      };
+      svg.onpointerdown = (ev) => { updateScrub(ev.clientX); svg.setPointerCapture(ev.pointerId); };
+      svg.onpointermove = (ev) => { if (userInteracting || ev.buttons > 0) updateScrub(ev.clientX); };
+      svg.onpointerup = () => {
+        userInteracting = false;
+        if (scrubLine) scrubLine.style.opacity = "0";
+        if (scrubDot) scrubDot.style.opacity = "0";
+        if (tooltip) tooltip.style.opacity = "0";
+      };
+      svg.onpointerleave = () => {
+        userInteracting = false;
+        if (scrubLine) scrubLine.style.opacity = "0";
+        if (scrubDot) scrubDot.style.opacity = "0";
+        if (tooltip) tooltip.style.opacity = "0";
+      };
+    }
+  }
+}
+showPlan(e){let t=e.plan,n=yu(e),r=(e,t)=>`<span class="chip ${e}">${t}</span>`,i=``,a=``,o=null,s=`E-bikes April 1 – November 15`,c=`Motorcycles May 25 – November 15`;t.kind===`decommission`?(i=r(`nobike`,`✕ To be decommissioned`),a=`Trail to be closed and restored (often replaced by a reroute nearby)`):t.kind===`designate`?(i=t.mode===`moto`?r(`moto`,`🏍️ Opening to motorcycles`):r(`ebike`,`⚡ Opening to Class 1 e-bikes`)+r(`hike`,`🥾 Hiking`)+r(`bike`,`🚵 Bikes`),a=`Existing trail, new designation`,o=t.mode===`moto`?c:s):(t.mode===`moto`?i=r(`moto`,`🏍️ Motorcycles`):(i=r(`hike`,`🥾 Hiking`),t.mode!==`foot`&&(i+=r(`bike`,`🚵 Bikes`)),i+=t.mode===`ebike`?r(`ebike`,`⚡ Class 1 e-bikes`):r(`nobike`,t.mode===`foot`?`No bikes`:`No e-bikes`)),a=t.kind===`adopt`?`Existing user-made trail, adopted into the official system`:`New trail construction`,o=t.mode===`moto`?c:t.mode===`ebike`?s:null);let l=[[`Change`,a],[`Season`,o],[`Project note`,t.note?Tu(t.note.charAt(0).toUpperCase()+t.note.slice(1)):null],[`Elevation`,`${e.minFt.toLocaleString()}′ – ${e.maxFt.toLocaleString()}′`],[`Source`,`<a href="https://www.fs.usda.gov/r05/laketahoebasin/projects/54566" target="_blank" rel="noopener">USFS Basin Wide Trails Analysis</a>, decision signed Jan 9, 2026`]];this.card.innerHTML=`
       <button id="card-close" class="icon-btn" aria-label="Close">✕</button>
       <p class="eyebrow"><span class="stamp plan" style="color:${`#`+Su(e).getHexString()}">Approved plan · 2026</span>${n===`new`?`not built yet`:``}</p>
       <h2>${Tu(e.name)}</h2>
@@ -4949,24 +5079,51 @@ if(this.selected=e?e.id:null,this.list.querySelectorAll(`li[data-id]`).forEach(t
       <dl>${l.filter(([,e])=>e).map(([e,t])=>`<dt>${e}</dt><dd>${t}</dd>`).join(``)}</dl>
       <p class="fineprint">Alignment is planning-level from the project’s GIS. Built routes may shift, and construction is phased over several years.</p>
       <button id="card-zoom" class="text-btn">↺ Zoom to trail</button>
-    `,this.openCard(e)}};function Ou(e){return e.plan?`<span class="swatch plan" style="--c:#${Su(e).getHexString()}" data-kind="${yu(e)}"></span>`:`<span class="swatch ${e.bike?`bike`:`hike`}"></span>`}function ku(e){let t=e.plan;return t.kind===`decommission`?`to be removed`:t.kind===`designate`?t.mode===`moto`?`opening to motorcycles`:`opening to e-bikes`:`${t.kind===`adopt`?`adopted trail`:`new trail`} · ${{ebike:`bikes + e-bikes`,nonmoto:`no e-bikes`,foot:`hike only`,moto:`motorcycles`,none:``}[t.mode]}`}function Au(e){let t=e.lines.reduce((e,t)=>t.length>e.length?t:e),n=[],r=0;for(let e=0;e<t.length;e+=3)e&&(r+=Math.hypot(t[e]-t[e-3],t[e+1]-t[e-2])),n.push([r,t[e+2]]);if(n.length<2)return``;if(n[0][1]>n[n.length-1][1]){let e=r;n.reverse();for(let t of n)t[0]=e-t[0]}let i=Math.min(...n.map(e=>e[1])),a=Math.max(...n.map(e=>e[1])),o=Math.max(60,a-i),s=e=>e/r*320,c=e=>78-(e-i)/o*64,l=Math.max(1,Math.floor(n.length/160)),u=n.filter((e,t)=>t%l===0||t===n.length-1).map((e,t)=>`${t?`L`:`M`}${s(e[0]).toFixed(1)},${c(e[1]).toFixed(1)}`).join(``),d=`${u}L320,86L0,86Z`,f=e.lines.length>1?`<span>longest continuous section</span>`:``,p=e=>`${Math.round(e*3.28084).toLocaleString()}′`,m=`#`+Su(e).getHexString();return`
-    <figure class="profile">
-      <svg viewBox="0 0 320 86" preserveAspectRatio="none" aria-label="Elevation profile">
-        <defs>
-          <filter id="wc" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="${e.id%50}" />
-            <feDisplacementMap in="SourceGraphic" scale="5" />
-          </filter>
-          <linearGradient id="pg" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stop-color="${m}" stop-opacity="0.6" />
-            <stop offset="1" stop-color="${m}" stop-opacity="0.12" />
-          </linearGradient>
-        </defs>
-        <path d="${d}" fill="url(#pg)" filter="url(#wc)" />
-        <path d="${u}" fill="none" stroke="${m}" stroke-width="1.6" stroke-linejoin="round" filter="url(#wc)" vector-effect="non-scaling-stroke" />
-      </svg>
-      <figcaption><span>${p(i)} → ${p(a)}</span>${f}<span>${(r/1609.34).toFixed(1)} mi</span></figcaption>
-    </figure>`}var ju=1200,Mu=.98,Nu=1.2;async function Pu(){let n=document.getElementById(`scene`),r=document.getElementById(`loading`),{map:i,trails:a,trailheads:o,terrain:s}=await Sl(),c=new Jc({canvas:n,antialias:!1});c.setPixelRatio(Math.min(window.devicePixelRatio,2)),c.outputColorSpace=Le;let l=new kn;l.background=new Z(.965,.937,.878);let u=new ea(-1,1,1,-1,1,6e3),d=new al(u,n);d.enableDamping=!0,d.dampingFactor=.12,d.screenSpacePanning=!1,d.zoomToCursor=!0,d.minZoom=.4,d.maxZoom=40,d.minPolarAngle=.7,d.maxPolarAngle=1.2,d.zoomSpeed=1.4,d.mouseButtons={LEFT:e.PAN,MIDDLE:e.DOLLY,RIGHT:e.ROTATE},d.touches={ONE:t.PAN,TWO:t.DOLLY_ROTATE};let f=Ll(s);l.add(f.group);let p=new Cu(a,s);l.add(p.group);let m=new wl(document.getElementById(`labels`),s,o),h=new Ut(1,1,{samples:4,type:v}),g=new Ci({vertexShader:Nl,fragmentShader:Pl,uniforms:{tColor:{value:h.texture},uResolution:{value:new q},uPixelRatio:{value:c.getPixelRatio()}},depthTest:!1,depthWrite:!1}),_=new kn;_.add(new Xr(new fi(2,2),g));let y=new ea(-1,1,1,-1,0,1),b=0,x=0;function S(){b=window.innerWidth,x=window.innerHeight,c.setSize(b,x,!1);let e=c.getPixelRatio();h.setSize(b*e,x*e),g.uniforms.uResolution.value.set(b*e,x*e);let t=b/x;u.left=-ju*t/2,u.right=ju*t/2,u.top=ju/2,u.bottom=-ju/2,u.updateProjectionMatrix(),p.setResolution(b*e,x*e),L=!0}let C=2e3;function w(e,t,n){u.position.set(n.x+C*Math.sin(t)*Math.sin(e),n.y+C*Math.cos(t),n.z+C*Math.sin(t)*Math.cos(e)),d.target.copy(n),u.lookAt(n)}let T=null;function E(e,t=1100){let n={target:d.target.clone(),zoom:u.zoom,azimuth:d.getAzimuthalAngle(),polar:d.getPolarAngle()},r=e.azimuth??n.azimuth;for(;r-n.azimuth>Math.PI;)r-=Math.PI*2;for(;r-n.azimuth<-Math.PI;)r+=Math.PI*2;T={start:performance.now(),duration:t,from:n,to:{target:e.target??n.target,zoom:e.zoom??n.zoom,azimuth:r,polar:e.polar??n.polar}}}function D(e){if(!T)return;let t=Math.min(1,(e-T.start)/T.duration),n=t<.5?4*t*t*t:1-(-2*t+2)**3/2,{from:r,to:i}=T,a=Math.sin(Math.PI*n)*.22,o=Math.exp(Ct.lerp(Math.log(r.zoom),Math.log(i.zoom),n)-a*Math.abs(Math.log(i.zoom/r.zoom)+.3));u.zoom=o,u.updateProjectionMatrix(),w(Ct.lerp(r.azimuth,i.azimuth,n),Ct.lerp(r.polar,i.polar,n),r.target.clone().lerp(i.target,n)),t>=1&&(T=null),L=!0}function O(e, t = null, n = T ? T.to.azimuth : d.getAzimuthalAngle(), r = T ? T.to.polar : d.getPolarAngle()) {
+    `,this.openCard(e)}};function Ou(e){return e.plan?`<span class="swatch plan" style="--c:#${Su(e).getHexString()}" data-kind="${yu(e)}"></span>`:`<span class="swatch ${e.bike?`bike`:`hike`}"></span>`}function ku(e){let t=e.plan;return t.kind===`decommission`?`to be removed`:t.kind===`designate`?t.mode===`moto`?`opening to motorcycles`:`opening to e-bikes`:`${t.kind===`adopt`?`adopted trail`:`new trail`} · ${{ebike:`bikes + e-bikes`,nonmoto:`no e-bikes`,foot:`hike only`,moto:`motorcycles`,none:``}[t.mode]}`}function Au(e){
+  let t = e.lines.reduce((e,t)=>t.length>e.length?t:e), n=[], r=0;
+  for(let e=0;e<t.length;e+=3) e && (r+=Math.hypot(t[e]-t[e-3],t[e+1]-t[e-2])), n.push([r,t[e+2]]);
+  if(n.length<2) return "";
+  if(n[0][1]>n[n.length-1][1]){
+    let e=r; n.reverse();
+    for(let t of n) t[0]=e-t[0];
+  }
+  let i=Math.min(...n.map(e=>e[1])), a=Math.max(...n.map(e=>e[1])), o=Math.max(60,a-i);
+  let s=e=>e/r*320, c=e=>78-(e-i)/o*64, l=Math.max(1,Math.floor(n.length/160));
+  let u=n.filter((e,t)=>t%l===0||t===n.length-1).map((e,t)=>(t?"L":"M")+s(e[0]).toFixed(1)+","+c(e[1]).toFixed(1)).join("");
+  let d=u+"L320,86L0,86Z";
+  let f=e.lines.length>1?"<span>longest continuous section</span>":"";
+  let p=e=>Math.round(e*3.28084).toLocaleString()+"'";
+  let m="#" + Su(e).getHexString();
+  let totalMi=(r/1609.34).toFixed(1);
+  let minFt=Math.round(i*3.28084);
+  let maxFt=Math.round(a*3.28084);
+  let travelerEmoji=(e.bike||e.bikePartial)?"\u{1F6B5}":"\u{1F97E}";
+  return '<figure class="profile" data-total-mi="' + totalMi + '" data-min-ft="' + minFt + '" data-max-ft="' + maxFt + '">' +
+    '<svg class="profile-svg" viewBox="0 0 320 86" preserveAspectRatio="none" aria-label="Elevation profile">' +
+      '<defs>' +
+        '<filter id="wc" x="-5%" y="-5%" width="110%" height="110%">' +
+          '<feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="' + (e.id%50) + '" />' +
+          '<feDisplacementMap in="SourceGraphic" scale="5" />' +
+        '</filter>' +
+        '<linearGradient id="pg" x1="0" x2="0" y1="0" y2="1">' +
+          '<stop offset="0" stop-color="' + m + '" stop-opacity="0.65" />' +
+          '<stop offset="1" stop-color="' + m + '" stop-opacity="0.08" />' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<path class="profile-fill" d="' + d + '" fill="url(#pg)" filter="url(#wc)" />' +
+      '<path class="profile-line" d="' + u + '" fill="none" stroke="' + m + '" stroke-width="2.2" stroke-linejoin="round" filter="url(#wc)" vector-effect="non-scaling-stroke" />' +
+      '<line class="scrubber-line" x1="0" y1="0" x2="0" y2="86" stroke="#2f2a33" stroke-width="1.2" stroke-dasharray="3 3" opacity="0" />' +
+      '<circle class="scrubber-dot" cx="0" cy="0" r="4.5" fill="#f2b632" stroke="#ffffff" stroke-width="2" opacity="0" />' +
+      '<g class="profile-traveler" opacity="1" transform="translate(0, 78)">' +
+        '<circle cx="0" cy="0" r="10" fill="#ffffff" stroke="' + m + '" stroke-width="2" />' +
+        '<text x="0" y="3.5" font-size="11" text-anchor="middle" dominant-baseline="central">' + travelerEmoji + '</text>' +
+      '</g>' +
+    '</svg>' +
+    '<div class="scrubber-tooltip"></div>' +
+    '<figcaption><span>' + p(i) + ' &rarr; ' + p(a) + '</span>' + f + '<span>' + totalMi + ' mi</span></figcaption>' +
+  '</figure>';
+}
+var ju=1200,Mu=.98,Nu=1.2;async function Pu(){let n=document.getElementById(`scene`),r=document.getElementById(`loading`),{map:i,trails:a,trailheads:o,terrain:s}=await Sl(),c=new Jc({canvas:n,antialias:!1});c.setPixelRatio(Math.min(window.devicePixelRatio,2)),c.outputColorSpace=Le;let l=new kn;l.background=new Z(.965,.937,.878);let u=new ea(-1,1,1,-1,1,6e3),d=new al(u,n);d.enableDamping=!0,d.dampingFactor=.12,d.screenSpacePanning=!1,d.zoomToCursor=!0,d.minZoom=.4,d.maxZoom=40,d.minPolarAngle=.7,d.maxPolarAngle=1.2,d.zoomSpeed=1.4,d.mouseButtons={LEFT:e.PAN,MIDDLE:e.DOLLY,RIGHT:e.ROTATE},d.touches={ONE:t.PAN,TWO:t.DOLLY_ROTATE};let f=Ll(s);l.add(f.group);let p=new Cu(a,s);l.add(p.group);let m=new wl(document.getElementById(`labels`),s,o),h=new Ut(1,1,{samples:4,type:v}),g=new Ci({vertexShader:Nl,fragmentShader:Pl,uniforms:{tColor:{value:h.texture},uResolution:{value:new q},uPixelRatio:{value:c.getPixelRatio()}},depthTest:!1,depthWrite:!1}),_=new kn;_.add(new Xr(new fi(2,2),g));let y=new ea(-1,1,1,-1,0,1),b=0,x=0;function S(){b=window.innerWidth,x=window.innerHeight,c.setSize(b,x,!1);let e=c.getPixelRatio();h.setSize(b*e,x*e),g.uniforms.uResolution.value.set(b*e,x*e);let t=b/x;u.left=-ju*t/2,u.right=ju*t/2,u.top=ju/2,u.bottom=-ju/2,u.updateProjectionMatrix(),p.setResolution(b*e,x*e),L=!0}let C=2e3;function w(e,t,n){u.position.set(n.x+C*Math.sin(t)*Math.sin(e),n.y+C*Math.cos(t),n.z+C*Math.sin(t)*Math.cos(e)),d.target.copy(n),u.lookAt(n)}let T=null;function E(e,t=1100){let n={target:d.target.clone(),zoom:u.zoom,azimuth:d.getAzimuthalAngle(),polar:d.getPolarAngle()},r=e.azimuth??n.azimuth;for(;r-n.azimuth>Math.PI;)r-=Math.PI*2;for(;r-n.azimuth<-Math.PI;)r+=Math.PI*2;T={start:performance.now(),duration:t,from:n,to:{target:e.target??n.target,zoom:e.zoom??n.zoom,azimuth:r,polar:e.polar??n.polar}}}function D(e){if(!T)return;let t=Math.min(1,(e-T.start)/T.duration),n=t<.5?4*t*t*t:1-(-2*t+2)**3/2,{from:r,to:i}=T,a=Math.sin(Math.PI*n)*.22,o=Math.exp(Ct.lerp(Math.log(r.zoom),Math.log(i.zoom),n)-a*Math.abs(Math.log(i.zoom/r.zoom)+.3));u.zoom=o,u.updateProjectionMatrix(),w(Ct.lerp(r.azimuth,i.azimuth,n),Ct.lerp(r.polar,i.polar,n),r.target.clone().lerp(i.target,n)),t>=1&&(T=null),L=!0}function O(e, t = null, n = T ? T.to.azimuth : d.getAzimuthalAngle(), r = T ? T.to.polar : d.getPolarAngle()) {
   let isMobile = b <= 768;
   let isOverview = Array.isArray(e);
   if (!t) {

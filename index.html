@@ -29,18 +29,101 @@
     />
     
     
-    <script type="module" crossorigin src="./assets/app.js?v=1790283623535"></script>
-    <link rel="stylesheet" crossorigin href="./assets/app.css?v=1790283623535">
+    <script type="module" crossorigin src="./assets/app.js?v=1790390229089"></script>
+    <link rel="stylesheet" crossorigin href="./assets/app.css?v=1790390229089">
   </head>
   <body>
     <canvas id="scene"></canvas>
     <div id="labels" aria-hidden="true"></div>
     <div id="tooltip" role="tooltip"></div>
 
+    <div id="ambience-layer" aria-hidden="true">
+      <!-- Karl the Fog (Atmospheric watercolor clouds) -->
+      <div id="fog-layer" class="fog-visible">
+        <div class="fog-cloud fog-1">
+          <svg viewBox="0 0 700 280" preserveAspectRatio="none">
+            <defs>
+              <radialGradient id="fogGrad1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.82" />
+                <stop offset="45%" stop-color="#edf4f7" stop-opacity="0.55" />
+                <stop offset="80%" stop-color="#dce8ee" stop-opacity="0.18" />
+                <stop offset="100%" stop-color="#cfdfe8" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            <path d="M 50 140 C 60 70, 160 50, 220 90 C 260 40, 360 40, 410 80 C 470 50, 560 90, 550 150 C 560 210, 460 230, 380 200 C 310 240, 180 230, 120 190 C 70 210, 40 180, 50 140 Z" fill="url(#fogGrad1)" />
+          </svg>
+        </div>
+        <div class="fog-cloud fog-2">
+          <svg viewBox="0 0 700 280" preserveAspectRatio="none">
+            <path d="M 60 130 C 80 60, 180 40, 250 80 C 300 30, 400 40, 450 90 C 500 60, 570 100, 560 160 C 550 220, 440 240, 360 210 C 290 250, 160 230, 110 180 C 60 190, 40 160, 60 130 Z" fill="url(#fogGrad1)" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Wildlife layer: Soaring Coastal Red-Tailed Hawk -->
+      <div id="wildlife-layer">
+        <div class="soaring-hawk">
+          <svg class="hawk-svg" viewBox="0 0 100 60" width="46" height="28">
+            <defs>
+              <linearGradient id="hawkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3b2b23" />
+                <stop offset="60%" stop-color="#5a3d31" />
+                <stop offset="100%" stop-color="#b84628" />
+              </linearGradient>
+            </defs>
+            <path class="hawk-wing left" d="M 45 30 Q 25 14 4 17 C 2 19 7 26 17 29 C 27 32 37 33 45 32 Z" fill="#46342b" />
+            <path class="hawk-wing right" d="M 55 30 Q 75 14 96 17 C 98 19 93 26 83 29 C 73 32 63 33 55 32 Z" fill="#46342b" />
+            <path d="M 47 17 Q 50 11 53 17 L 52 38 L 48 38 Z" fill="url(#hawkGrad)" />
+            <path d="M 48 38 Q 42 51 44 55 Q 50 57 56 55 Q 58 51 52 38 Z" fill="#c04828" />
+            <polygon points="50,10 47,15 53,15" fill="#f2b632" />
+          </svg>
+          <div class="hawk-shadow"></div>
+        </div>
+
+        <!-- Bay Sailboat in SF Bay -->
+        <div class="bay-sailboat" title="San Francisco Bay Sailboat">
+          <svg viewBox="0 0 54 48" width="34" height="30">
+            <line x1="28" y1="6" x2="28" y2="38" stroke="#5a4231" stroke-width="2" stroke-linecap="round" />
+            <path d="M 28 8 L 44 34 L 28 35 Z" fill="#faf6ee" stroke="#ded4c3" stroke-width="1" />
+            <path d="M 26 12 L 12 34 L 26 34 Z" fill="#f0e9dc" stroke="#ded4c3" stroke-width="1" />
+            <path d="M 8 36 L 46 36 L 40 43 L 14 43 Z" fill="#ffffff" stroke="#c4b8a5" stroke-width="1.2" />
+            <line x1="11" y1="39" x2="43" y2="39" stroke="#d2532c" stroke-width="1.8" stroke-linecap="round" />
+            <polygon points="28,6 28,11 34,8.5" fill="#f2b632" />
+          </svg>
+          <div class="boat-wake"></div>
+        </div>
+      </div>
+    </div>
+
     <aside id="panel">
       <div class="sheet-handle" aria-label="Toggle panel size" role="button"></div>
       <header>
-        <h1><span class="wash"></span>Bay Area <em>Trails</em></h1>
+        <h1><span class="wash"></span>Bay Area <em>Trails</em>
+          <svg class="poppy-badge" viewBox="0 0 40 46" width="28" height="32" aria-label="California Golden Poppy" title="California Golden Poppy">
+            <defs>
+              <linearGradient id="poppyGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#e86100" />
+                <stop offset="45%" stop-color="#f59100" />
+                <stop offset="100%" stop-color="#ffca18" />
+              </linearGradient>
+              <linearGradient id="poppyPetalBack" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#cc4400" />
+                <stop offset="100%" stop-color="#e86e00" />
+              </linearGradient>
+              <linearGradient id="stemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#6b8f52" />
+                <stop offset="100%" stop-color="#486934" />
+              </linearGradient>
+            </defs>
+            <path d="M19 24 Q18 35 22 44" fill="none" stroke="url(#stemGrad)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M19 33 Q13 31 10 35 Q14 36 19 35" fill="#587d40" opacity="0.9" />
+            <path d="M12 21 C8 13 14 6 20 8 C26 6 32 13 28 21 C25 24 15 24 12 21 Z" fill="url(#poppyPetalBack)" />
+            <path d="M9 19 C6 12 11 6 18 10 C19 14 18 20 15 23 C12 23 10 21 9 19 Z" fill="url(#poppyGrad)" />
+            <path d="M31 19 C34 12 29 6 22 10 C21 14 22 20 25 23 C28 23 30 21 31 19 Z" fill="url(#poppyGrad)" />
+            <path d="M14 22 C12 14 16 7 20 7 C24 7 28 14 26 22 C24 24 16 24 14 22 Z" fill="url(#poppyGrad)" opacity="0.95" />
+            <circle cx="20" cy="18" r="2.5" fill="#8c3300" opacity="0.75" />
+          </svg>
+        </h1>
         <p id="stats" class="sub">Loading trails…</p>
       </header>
       <div class="search-wrap">
@@ -99,6 +182,8 @@
       <button id="btn-in" title="Zoom in (+)">+</button>
       <button id="btn-out" title="Zoom out (−)">−</button>
       <button id="btn-home" title="Reset view (H)">⌂</button>
+      <button id="btn-fog" class="ambient-toggle on" title="Toggle Karl the Fog (F)" aria-label="Toggle Karl the Fog" aria-pressed="true">🌁</button>
+      <button id="btn-wildlife" class="ambient-toggle on" title="Toggle Wildlife &amp; Sailboats (W)" aria-label="Toggle Wildlife" aria-pressed="true">🦅</button>
     </nav>
 
     <p id="hint">Drag to pan · scroll to zoom · right-drag to spin</p>
@@ -108,7 +193,35 @@
       · Elevation: USGS 3DEP / AWS Terrain Tiles
     </footer>
 
-    <div id="loading"><div class="blob"></div><p>Mixing the paints…</p></div>
+    <div id="loading">
+      <div class="palette-scene">
+        <svg class="palette-svg" viewBox="0 0 160 130" width="130" height="106" aria-label="Watercolor Palette">
+          <defs>
+            <radialGradient id="woodGrad" cx="30%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#dfcaa6" />
+              <stop offset="100%" stop-color="#c4a77b" />
+            </radialGradient>
+          </defs>
+          <path d="M 30 110 C 10 95 10 35 40 18 C 70 2 135 15 150 55 C 160 85 130 120 95 125 C 80 127 75 115 65 110 C 55 105 45 120 30 110 Z" fill="url(#woodGrad)" stroke="#a6885e" stroke-width="2.5" />
+          <ellipse cx="60" cy="98" rx="8" ry="12" fill="#f6efe0" stroke="#a6885e" stroke-width="1.8" />
+          <circle class="paint-dab p-blue" cx="45" cy="40" r="10" fill="#2f6b9a" />
+          <circle class="paint-dab p-green" cx="75" cy="30" r="9.5" fill="#588554" />
+          <circle class="paint-dab p-orange" cx="106" cy="35" r="10.5" fill="#e86e25" />
+          <circle class="paint-dab p-red" cx="130" cy="55" r="10" fill="#d2532c" />
+          <circle class="paint-dab p-gold" cx="125" cy="85" r="9" fill="#f2b632" />
+          <g class="paintbrush-arm">
+            <path d="M 0 0 L 70 -50" stroke="#7a5638" stroke-width="4.5" stroke-linecap="round" />
+            <rect x="-4" y="-2" width="8" height="10" fill="#b0bac2" rx="1.5" />
+            <path d="M -4 8 C -4 16 4 16 4 8 Z" fill="#2f6b9a" />
+          </g>
+        </svg>
+        <div class="paint-drop drop-1"></div>
+        <div class="paint-drop drop-2"></div>
+        <div class="paint-drop drop-3"></div>
+      </div>
+      <p id="loading-title">Mixing watercolor paints…</p>
+      <p id="loading-sub" class="sub-quote">“Painting 2,172 Bay Area trails…”</p>
+    </div>
   
     <script>
       // Failsafe: dismiss loading spinner after 3.5s under any circumstance
@@ -120,5 +233,6 @@
         }
       }, 3500);
     </script>
+      <div id="map-toast" role="status" aria-live="polite"></div>
   </body>
 </html>
