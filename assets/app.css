@@ -181,19 +181,62 @@
   }
   
   /* Minimized/Collapsed State: like Apple Maps searching bar only */
-  #panel.minimized {
-    max-height: 64px;
+  /* 3-State Sheet: Collapsed (search only) | Medium (half) | Full (expanded) */
+  #panel.state-collapsed, #panel.minimized {
+    height: 66px !important;
+    max-height: 66px !important;
   }
+  #panel.state-collapsed header,
   #panel.minimized header,
+  #panel.state-collapsed .filters,
   #panel.minimized .filters,
+  #panel.state-collapsed .plan-toggle,
   #panel.minimized .plan-toggle,
+  #panel.state-collapsed #trail-list,
   #panel.minimized #trail-list {
     display: none !important;
   }
+  #panel.state-collapsed .search-wrap,
   #panel.minimized .search-wrap {
     margin: 0 14px 6px;
   }
-  
+
+  /* Medium state: half height (~48vh) */
+  #panel.state-medium {
+    height: 48vh !important;
+    max-height: 48vh !important;
+  }
+
+  /* Full state: full screen expanded with handle preserved on top */
+  #panel.state-full {
+    height: calc(100vh - env(safe-area-inset-top, 14px) - 24px) !important;
+    max-height: calc(100vh - env(safe-area-inset-top, 14px) - 24px) !important;
+  }
+  #panel.state-full #trail-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Interactive Drag Handles */
+  .sheet-handle {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .sheet-handle:active {
+    cursor: grabbing;
+  }
+  #panel header {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  #panel header:active {
+    cursor: grabbing;
+  }
   /* Detail Card: Premium Mobile Bottom Sheet */
   #card {
     position: fixed;

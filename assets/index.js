@@ -4889,30 +4889,146 @@ function Vl(e){let t=new di(.22,.75,6,1);t.translate(0,.52,0);let n=new ui(.04,.
     }
   }
   return box;
-}pick(e,t,n,r,i,a=9){let o=e.matrixWorld.elements.join(`,`)+e.projectionMatrix.elements.join(`,`)+r+i;o!==this.projectedFor&&(this.project(e,r,i),this.projectedFor=o);let s=null,c=a*a;for(let{trail:e,pts:r}of this.projected)for(let i=0;i<r.length-2;i+=2){let a=r[i],o=r[i+1],l=r[i+2],u=r[i+3];if(a===-1e9||l===-1e9)continue;let d=l-a,f=u-o,p=d*d+f*f||1,m=Math.max(0,Math.min(1,((t-a)*d+(n-o)*f)/p)),h=a+m*d-t,g=o+m*f-n,_=h*h+g*g;_<c&&(c=_,s=e)}return s}project(e,t,n){this.projected=[];let r=new Kt().multiplyMatrices(e.projectionMatrix,e.matrixWorldInverse).elements;for(let e of this.trails)if(this.matches(e))for(let i of this.world[e.id]){let a=new Float32Array(i.length/3*2);for(let e=0,o=0;e<i.length;e+=3,o+=2){let s=i[e],c=i[e+1],l=i[e+2],u=r[3]*s+r[7]*c+r[11]*l+r[15],d=(r[0]*s+r[4]*c+r[8]*l+r[12])/u,f=(r[1]*s+r[5]*c+r[9]*l+r[13])/u;if(d<-1.2||d>1.2||f<-1.2||f>1.2){a[o]=a[o+1]=-1e9;continue}a[o]=(d+1)/2*t,a[o+1]=(1-f)/2*n}this.projected.push({trail:e.id,pts:a})}}},wu=e=>document.querySelector(e),Tu=e=>e.replace(/[&<>"]/g,e=>({"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`})[e]),Eu=e=>e.toLowerCase().normalize(`NFD`).replace(/[^a-z0-9 ]/g,` `).replace(/\s+/g,` `).trim(),Du=class{trails;h;filter=`all`;plansOn=!1;planGroups=new Set([`new`,`decommission`]);query=``;results=[];active=-1;selected=null;list=wu(`#trail-list`);search=wu(`#search`);card=wu(`#card`);constructor(e,t){this.trails=e,this.h=t,this.search.addEventListener(`input`,()=>{this.query=this.search.value,this.active=-1,this.render()}),this.search.addEventListener(`keydown`,e=>{if(e.key===`ArrowDown`||e.key===`ArrowUp`){e.preventDefault();let t=this.results.length;if(!t)return;this.active=(this.active+(e.key===`ArrowDown`?1:-1)+t)%t,this.highlightActive(),this.h.onHover(this.results[this.active].id)}else if(e.key===`Enter`){let e=this.results[Math.max(0,this.active)];e&&this.h.onSelect(e.id)}else e.key===`Escape`&&(this.search.value=``,this.query=``,this.render(),this.search.blur())}),window.addEventListener(`keydown`,e=>{e.key===`/`&&document.activeElement!==this.search&&(e.preventDefault(),this.search.focus(),this.search.select())}),(()=>{
-  let handle = wu(".sheet-handle");
-  if (handle) {
-    handle.addEventListener("click", (ev) => {
-      ev.stopPropagation();
-      let p = wu("#panel");
-      if (p) p.classList.toggle("minimized");
-    });
+}pick(e,t,n,r,i,a=9){let o=e.matrixWorld.elements.join(`,`)+e.projectionMatrix.elements.join(`,`)+r+i;o!==this.projectedFor&&(this.project(e,r,i),this.projectedFor=o);let s=null,c=a*a;for(let{trail:e,pts:r}of this.projected)for(let i=0;i<r.length-2;i+=2){let a=r[i],o=r[i+1],l=r[i+2],u=r[i+3];if(a===-1e9||l===-1e9)continue;let d=l-a,f=u-o,p=d*d+f*f||1,m=Math.max(0,Math.min(1,((t-a)*d+(n-o)*f)/p)),h=a+m*d-t,g=o+m*f-n,_=h*h+g*g;_<c&&(c=_,s=e)}return s}project(e,t,n){this.projected=[];let r=new Kt().multiplyMatrices(e.projectionMatrix,e.matrixWorldInverse).elements;for(let e of this.trails)if(this.matches(e))for(let i of this.world[e.id]){let a=new Float32Array(i.length/3*2);for(let e=0,o=0;e<i.length;e+=3,o+=2){let s=i[e],c=i[e+1],l=i[e+2],u=r[3]*s+r[7]*c+r[11]*l+r[15],d=(r[0]*s+r[4]*c+r[8]*l+r[12])/u,f=(r[1]*s+r[5]*c+r[9]*l+r[13])/u;if(d<-1.2||d>1.2||f<-1.2||f>1.2){a[o]=a[o+1]=-1e9;continue}a[o]=(d+1)/2*t,a[o+1]=(1-f)/2*n}this.projected.push({trail:e.id,pts:a})}}},wu=e=>document.querySelector(e),Tu=e=>e.replace(/[&<>"]/g,e=>({"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`})[e]),Eu=e=>e.toLowerCase().normalize(`NFD`).replace(/[^a-z0-9 ]/g,` `).replace(/\s+/g,` `).trim(),Du=class{trails;h;filter=`all`;plansOn=!1;planGroups=new Set([`new`,`decommission`]);query=``;results=[];active=-1;selected=null;list=wu(`#trail-list`);search=wu(`#search`);card=wu(`#card`);constructor(e,t){this.trails=e,this.h=t,this.search.addEventListener(`input`,()=>{this.query=this.search.value,this.active=-1,this.render()}),this.search.addEventListener(`keydown`,e=>{if(e.key===`ArrowDown`||e.key===`ArrowUp`){e.preventDefault();let t=this.results.length;if(!t)return;this.active=(this.active+(e.key===`ArrowDown`?1:-1)+t)%t,this.highlightActive(),this.h.onHover(this.results[this.active].id)}else if(e.key===`Enter`){let e=this.results[Math.max(0,this.active)];e&&this.h.onSelect(e.id)}else e.key===`Escape`&&(this.search.value=``,this.query=``,this.render(),this.search.blur())}),window.addEventListener(`keydown`,e=>{e.key===`/`&&document.activeElement!==this.search&&(e.preventDefault(),this.search.focus(),this.search.select())}),(() => {
+  let panel = wu('#panel');
+  let handle = wu('.sheet-handle');
+  let header = wu('#panel header');
+  let searchInput = wu('#search');
+  if (!panel || !handle) return;
+
+  let curState = 'medium';
+
+  function getSnapHeights() {
+    let vh = window.innerHeight;
+    let fullH = Math.max(300, vh - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '14', 10) + 24));
+    let medH = Math.round(vh * 0.48);
+    let colH = 66;
+    return { colH, medH, fullH };
   }
-  let panelHdr = wu("#panel header");
-  if (panelHdr) {
-    panelHdr.addEventListener("click", () => {
-      if (window.innerWidth <= 768) {
-        let p = wu("#panel");
-        if (p) p.classList.toggle("minimized");
+
+  function applyState(newState, animate) {
+    if (animate === undefined) animate = true;
+    curState = newState;
+    panel.style.transition = animate ? 'height 0.35s cubic-bezier(0.2, 1, 0.3, 1), max-height 0.35s cubic-bezier(0.2, 1, 0.3, 1)' : 'none';
+    panel.classList.remove('state-collapsed', 'state-medium', 'state-full', 'minimized');
+    
+    let snaps = getSnapHeights();
+    if (curState === 'collapsed') {
+      panel.classList.add('state-collapsed', 'minimized');
+      panel.style.height = snaps.colH + 'px';
+      panel.style.maxHeight = snaps.colH + 'px';
+    } else if (curState === 'medium') {
+      panel.classList.add('state-medium');
+      panel.style.height = snaps.medH + 'px';
+      panel.style.maxHeight = snaps.medH + 'px';
+    } else if (curState === 'full') {
+      panel.classList.add('state-full');
+      panel.style.height = snaps.fullH + 'px';
+      panel.style.maxHeight = snaps.fullH + 'px';
+    }
+  }
+
+  let isDragging = false;
+  let startY = 0;
+  let startH = 0;
+  let lastY = 0;
+  let velocityY = 0;
+  let lastTime = 0;
+
+  function onPointerDown(ev) {
+    if (window.innerWidth > 768) return;
+    if (ev.target.closest('button, a, input, [data-filter], [data-plan]')) return;
+    
+    isDragging = true;
+    startY = ev.clientY;
+    lastY = startY;
+    lastTime = performance.now();
+    velocityY = 0;
+    startH = panel.getBoundingClientRect().height;
+    
+    panel.style.transition = 'none';
+    document.body.style.userSelect = 'none';
+    
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+  }
+
+  function onPointerMove(ev) {
+    if (!isDragging) return;
+    let curY = ev.clientY;
+    let now = performance.now();
+    let dt = now - lastTime;
+    if (dt > 0) {
+      velocityY = (curY - lastY) / dt;
+    }
+    lastY = curY;
+    lastTime = now;
+
+    let deltaY = curY - startY;
+    let newH = startH - deltaY;
+    
+    let snaps = getSnapHeights();
+    newH = Math.max(snaps.colH - 10, Math.min(snaps.fullH + 20, newH));
+    
+    panel.style.height = newH + 'px';
+    panel.style.maxHeight = newH + 'px';
+
+    if (newH < 110) {
+      panel.classList.add('minimized', 'state-collapsed');
+    } else {
+      panel.classList.remove('minimized', 'state-collapsed');
+    }
+  }
+
+  function onPointerUp(ev) {
+    if (!isDragging) return;
+    isDragging = false;
+    document.body.style.userSelect = '';
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+
+    let curH = panel.getBoundingClientRect().height;
+    let snaps = getSnapHeights();
+    let mid1 = (snaps.colH + snaps.medH) / 2;
+    let mid2 = (snaps.medH + snaps.fullH) / 2;
+
+    if (velocityY > 0.4) {
+      if (curH > mid2) applyState('medium');
+      else applyState('collapsed');
+    } else if (velocityY < -0.4) {
+      if (curH < mid1) applyState('medium');
+      else applyState('full');
+    } else {
+      if (curH < mid1) applyState('collapsed');
+      else if (curH < mid2) applyState('medium');
+      else applyState('full');
+    }
+  }
+
+  handle.addEventListener('pointerdown', onPointerDown);
+  if (header) {
+    header.addEventListener('pointerdown', onPointerDown);
+  }
+
+  handle.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    if (window.innerWidth > 768) return;
+    if (Math.abs(lastY - startY) > 6) return;
+    if (curState === 'collapsed') applyState('medium');
+    else if (curState === 'medium') applyState('full');
+    else applyState('medium');
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('focus', () => {
+      if (window.innerWidth <= 768 && curState === 'collapsed') {
+        applyState('medium');
       }
     });
   }
-})(),this.search.addEventListener("focus", () => {
-  let p = wu("#panel");
-  if (p && p.classList.contains("minimized")) {
-    p.classList.remove("minimized");
-  }
-})
+})()
   wu(`#search-clear`).addEventListener(`click`,()=>{this.search.value=``,this.query=``,this.render(),this.search.focus()});for(let e of document.querySelectorAll(`[data-filter]`))e.addEventListener(`click`,()=>{this.filter=e.dataset.filter,document.querySelectorAll(`[data-filter]`).forEach(t=>t.classList.toggle(`on`,t===e)),this.h.onFilter(this.filter),this.render()});wu(`#plan-btn`).addEventListener(`click`,()=>this.setPlans(!this.plansOn));for(let e of document.querySelectorAll(`[data-plan]`))e.addEventListener(`click`,()=>{let t=e.dataset.plan;this.planGroups.has(t)?this.planGroups.delete(t):this.planGroups.add(t),e.classList.toggle(`on`,this.planGroups.has(t)),this.h.onPlans(new Set(this.planGroups)),this.render()});this.list.addEventListener(`click`,e=>{let t=e.target.closest(`[data-id]`);t&&this.h.onSelect(Number(t.dataset.id))}),this.list.addEventListener(`mouseover`,e=>{let t=e.target.closest(`[data-id]`);this.h.onHover(t?Number(t.dataset.id):null)}),this.list.addEventListener(`mouseleave`,()=>this.h.onHover(null)),wu("#btn-home").addEventListener("click",()=>this.h.onHome());
 let showToast = (msg) => {
   let t = wu("#map-toast");
