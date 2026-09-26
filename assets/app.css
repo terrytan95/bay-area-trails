@@ -867,3 +867,23 @@
   overflow-wrap: anywhere !important;
   min-width: 0 !important;
 }
+
+/* Region Switcher Button */
+.region-switch-btn {
+  background: linear-gradient(135deg, #15803d 0%, #047857 100%) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(21, 128, 61, 0.35);
+  margin-right: 6px;
+  border-radius: 999px;
+  padding: 4px 12px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.region-switch-btn:hover {
+  transform: translateY(-1.5px) scale(1.04);
+  box-shadow: 0 4px 14px rgba(21, 128, 61, 0.5);
+}
