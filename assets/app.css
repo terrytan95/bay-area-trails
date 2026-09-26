@@ -442,46 +442,70 @@
   margin-left: 8px;
 }
 
-/* San Francisco Bay Sailboat */
+/* San Francisco Bay Sailboat (3D Projected to Water Surface) */
 .bay-sailboat {
   position: absolute;
-  left: 45%;
-  top: 56%;
-  animation: sailAcrossBay 60s ease-in-out infinite alternate;
+  top: 0;
+  left: 0;
+  margin-top: -15px;
+  margin-left: -17px;
+  pointer-events: none;
+  z-index: 6;
   will-change: transform;
 }
 .bay-sailboat svg {
   animation: boatBob 3.2s ease-in-out infinite alternate;
-  filter: drop-shadow(0 4px 6px rgba(35, 75, 110, 0.25));
+  filter: drop-shadow(0 3px 6px rgba(35, 75, 110, 0.35));
   transition: transform 0.25s ease;
-}
-.bay-sailboat:hover svg {
-  transform: scale(1.2) rotate(-5deg);
 }
 @keyframes boatBob {
   0% { transform: translateY(0) rotate(-2.5deg); }
-  50% { transform: translateY(3.5px) rotate(2deg); }
-  100% { transform: translateY(-1px) rotate(-1deg); }
-}
-@keyframes sailAcrossBay {
-  0% { transform: translate(0, 0); }
-  50% { transform: translate(80px, -30px); }
-  100% { transform: translate(160px, -55px); }
+  50% { transform: translateY(2.5px) rotate(1.5deg); }
+  100% { transform: translateY(-1px) rotate(-1.5deg); }
 }
 .boat-wake {
   width: 42px;
   height: 6px;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.65);
   border-radius: 50%;
   margin-top: -6px;
-  margin-left: -6px;
-  animation: wakeRipple 2.2s ease-out infinite;
+  margin-left: -4px;
+  animation: wakeRipple 2s ease-out infinite;
 }
 @keyframes wakeRipple {
   0% { transform: scaleX(0.7); opacity: 0.7; }
-  100% { transform: scaleX(1.5); opacity: 0; }
+  100% { transform: scaleX(1.4); opacity: 0; }
 }
 
+/* High-Altitude Airplane (3D Airspace Navigation) */
+.sky-airplane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-top: -19px;
+  margin-left: -19px;
+  pointer-events: none;
+  z-index: 8;
+  will-change: transform;
+}
+.airplane-svg {
+  display: block;
+  transform-origin: center center;
+  filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.35));
+}
+.airplane-contrail {
+  position: absolute;
+  top: 35px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 44px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 4px;
+  filter: blur(1px);
+  pointer-events: none;
+  opacity: 0.85;
+}
 /* 3. Artisan Watercolor Palette Loading Screen */
 #loading {
   background: var(--paper);

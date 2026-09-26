@@ -4932,6 +4932,126 @@ function Vl(e){let t=new di(.22,.75,6,1);t.translate(0,.52,0);let n=new ui(.04,.
     }
   }
 }},wu=e=>document.querySelector(e),Tu=e=>e.replace(/[&<>"]/g,e=>({"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`})[e]),Eu=e=>e.toLowerCase().normalize(`NFD`).replace(/[^a-z0-9 ]/g,` `).replace(/\s+/g,` `).trim();
+function catmullRom(p0, p1, p2, p3, t) {
+  let v0 = (p2 - p0) * 0.5;
+  let v1 = (p3 - p1) * 0.5;
+  let t2 = t * t, t3 = t * t2;
+  return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
+}
+
+class AmbienceManager {
+  constructor(mapData, terrain) {
+    this.map = mapData;
+    this.terrain = terrain;
+    this.boatEl = document.querySelector(".bay-sailboat");
+    this.planeEl = document.querySelector(".sky-airplane");
+    this.v = new J();
+    this.vNext = new J();
+    this.boatCenterLon = -122.33;
+    this.boatCenterLat = 37.73;
+    this.flightWaypoints = [
+      { lon: -122.82, lat: 38.05 },
+      { lon: -122.50, lat: 37.85 },
+      { lon: -122.38, lat: 37.78 },
+      { lon: -122.25, lat: 37.66 },
+      { lon: -122.06, lat: 37.42 },
+      { lon: -121.90, lat: 37.34 },
+      { lon: -121.96, lat: 37.10 },
+      { lon: -122.05, lat: 36.96 },
+      { lon: -122.45, lat: 37.15 },
+      { lon: -122.80, lat: 37.65 }
+    ];
+  }
+  update(cam, vpW, vpH, timeMs) {
+    let wl = document.getElementById("wildlife-layer");
+    if (!wl || wl.classList.contains("wildlife-hidden")) return;
+
+    // 1. UPDATE SAILBOAT (Strictly anchored to 3D water surface!)
+    if (this.boatEl) {
+      let tBoat = ((timeMs || 0) * 0.000045) % 1;
+      let angle = tBoat * Math.PI * 2;
+      let ca = Math.cos(angle), sa = Math.sin(angle);
+      let dLon = ca * 0.038 - sa * 0.022;
+      let dLat = ca * 0.022 + sa * 0.052;
+      let lon = this.boatCenterLon + dLon;
+      let lat = this.boatCenterLat + dLat;
+      let nextAngle = angle + 0.06;
+      let nca = Math.cos(nextAngle), nsa = Math.sin(nextAngle);
+      let nLon = this.boatCenterLon + (nca * 0.038 - nsa * 0.022);
+      let nLat = this.boatCenterLat + (nca * 0.022 + nsa * 0.052);
+      let x = ((lon - this.map.bbox.west) / (this.map.bbox.east - this.map.bbox.west)) * this.map.widthM;
+      let y = ((lat - this.map.bbox.south) / (this.map.bbox.north - this.map.bbox.south)) * this.map.heightM;
+      let nx = ((nLon - this.map.bbox.west) / (this.map.bbox.east - this.map.bbox.west)) * this.map.widthM;
+      let ny = ((nLat - this.map.bbox.south) / (this.map.bbox.north - this.map.bbox.south)) * this.map.heightM;
+      let [wx, wy, wz] = xl(this.map, x, y, 1.2);
+      let [nwx, nwy, nwz] = xl(this.map, nx, ny, 1.2);
+      this.v.set(wx, wy, wz).project(cam);
+      this.vNext.set(nwx, nwy, nwz).project(cam);
+      if (this.v.z >= -1 && this.v.z <= 1) {
+        let sx = (this.v.x + 1) / 2 * vpW;
+        let sy = (1 - this.v.y) / 2 * vpH;
+        let nsx = (this.vNext.x + 1) / 2 * vpW;
+        let nsy = (1 - this.vNext.y) / 2 * vpH;
+        let headingRad = Math.atan2(nsy - sy, nsx - sx);
+        let headingDeg = headingRad * (180 / Math.PI) - 90;
+        let inScreen = sx > -50 && sx < vpW + 50 && sy > -50 && sy < vpH + 50;
+        if (inScreen) {
+          this.boatEl.style.display = "block";
+          this.boatEl.style.transform = "translate(" + Math.round(sx) + "px, " + Math.round(sy) + "px) rotate(" + Math.round(headingDeg) + "deg)";
+        } else {
+          this.boatEl.style.display = "none";
+        }
+      } else {
+        this.boatEl.style.display = "none";
+      }
+    }
+
+    // 2. UPDATE AIRPLANE (Flying in 3D sky airspace across Bay Area!)
+    if (this.planeEl) {
+      let pts = this.flightWaypoints;
+      let totalPts = pts.length;
+      let tPlane = (((timeMs || 0) * 0.000065) % 1) * totalPts;
+      let idx = Math.floor(tPlane);
+      let frac = tPlane - idx;
+      let p0 = pts[(idx - 1 + totalPts) % totalPts];
+      let p1 = pts[idx % totalPts];
+      let p2 = pts[(idx + 1) % totalPts];
+      let p3 = pts[(idx + 2) % totalPts];
+      let lon = catmullRom(p0.lon, p1.lon, p2.lon, p3.lon, frac);
+      let lat = catmullRom(p0.lat, p1.lat, p2.lat, p3.lat, frac);
+      let fracNext = Math.min(1.0, frac + 0.035);
+      let nLon = catmullRom(p0.lon, p1.lon, p2.lon, p3.lon, fracNext);
+      let nLat = catmullRom(p0.lat, p1.lat, p2.lat, p3.lat, fracNext);
+      let px = ((lon - this.map.bbox.west) / (this.map.bbox.east - this.map.bbox.west)) * this.map.widthM;
+      let py = ((lat - this.map.bbox.south) / (this.map.bbox.north - this.map.bbox.south)) * this.map.heightM;
+      let npx = ((nLon - this.map.bbox.west) / (this.map.bbox.east - this.map.bbox.west)) * this.map.widthM;
+      let npy = ((nLat - this.map.bbox.south) / (this.map.bbox.north - this.map.bbox.south)) * this.map.heightM;
+      let planeEle = 1950;
+      let [pwx, pwy, pwz] = xl(this.map, px, py, planeEle);
+      let [npwx, npwy, npwz] = xl(this.map, npx, npy, planeEle);
+      this.v.set(pwx, pwy, pwz).project(cam);
+      this.vNext.set(npwx, npwy, npwz).project(cam);
+      if (this.v.z >= -1 && this.v.z <= 1) {
+        let sx = (this.v.x + 1) / 2 * vpW;
+        let sy = (1 - this.v.y) / 2 * vpH;
+        let nsx = (this.vNext.x + 1) / 2 * vpW;
+        let nsy = (1 - this.vNext.y) / 2 * vpH;
+        let headingRad = Math.atan2(nsy - sy, nsx - sx);
+        let headingDeg = headingRad * (180 / Math.PI) - 90;
+        let inScreen = sx > -80 && sx < vpW + 80 && sy > -80 && sy < vpH + 80;
+        if (inScreen) {
+          this.planeEl.style.display = "block";
+          this.planeEl.style.transform = "translate(" + Math.round(sx) + "px, " + Math.round(sy) + "px) rotate(" + Math.round(headingDeg) + "deg)";
+        } else {
+          this.planeEl.style.display = "none";
+        }
+      } else {
+        this.planeEl.style.display = "none";
+      }
+    }
+  }
+};
+
 class CampsiteManager {
   constructor(campsites, mapData, onSelect) {
     this.campsites = campsites || [];
@@ -5492,7 +5612,8 @@ showPlan(e){let t=e.plan,n=yu(e),r=(e,t)=>`<span class="chip ${e}">${t}</span>`,
     '<figcaption><span>' + p(i) + ' &rarr; ' + p(a) + '</span>' + f + '<span>' + totalMi + ' mi</span></figcaption>' +
   '</figure>';
 }
-var ju=1200,Mu=.98,Nu=1.2;async function Pu(){let n=document.getElementById(`scene`),r=document.getElementById(`loading`),{map:i,trails:a,trailheads:o,terrain:s,campsites:campList}=await Sl(),c=new Jc({canvas:n,antialias:!1});let isMob=window.innerWidth<=768;c.setPixelRatio(Math.min(window.devicePixelRatio,isMob?1.5:1.75)),c.outputColorSpace=Le;let l=new kn;l.background=new Z(.965,.937,.878);let u=new ea(-1,1,1,-1,1,6e3),d=new al(u,n);d.enableDamping=!0,d.dampingFactor=.12,d.screenSpacePanning=!1,d.zoomToCursor=!0,d.minZoom=.22,d.maxZoom=40,d.minPolarAngle=.7,d.maxPolarAngle=1.2,d.zoomSpeed=1.4,d.mouseButtons={LEFT:e.PAN,MIDDLE:e.DOLLY,RIGHT:e.ROTATE},d.touches={ONE:t.PAN,TWO:t.DOLLY_ROTATE};let f=Ll(s);l.add(f.group);let p=new Cu(a,s);l.add(p.group);let campsiteMgr = new CampsiteManager(campList, i, (c) => selectCampsite(c));
+var ju=1200,Mu=.98,Nu=1.2;async function Pu(){let n=document.getElementById(`scene`),r=document.getElementById(`loading`),{map:i,trails:a,trailheads:o,terrain:s,campsites:campList}=await Sl(),c=new Jc({canvas:n,antialias:!1});let isMob=window.innerWidth<=768;c.setPixelRatio(Math.min(window.devicePixelRatio,isMob?1.5:1.75)),c.outputColorSpace=Le;let l=new kn;l.background=new Z(.965,.937,.878);let u=new ea(-1,1,1,-1,1,6e3),d=new al(u,n);d.enableDamping=!0,d.dampingFactor=.12,d.screenSpacePanning=!1,d.zoomToCursor=!0,d.minZoom=.22,d.maxZoom=40,d.minPolarAngle=.7,d.maxPolarAngle=1.2,d.zoomSpeed=1.4,d.mouseButtons={LEFT:e.PAN,MIDDLE:e.DOLLY,RIGHT:e.ROTATE},d.touches={ONE:t.PAN,TWO:t.DOLLY_ROTATE};let f=Ll(s);l.add(f.group);let p=new Cu(a,s);l.add(p.group);let ambienceMgr = new AmbienceManager(i, s);
+let campsiteMgr = new CampsiteManager(campList, i, (c) => selectCampsite(c));
 function selectCampsite(c) {
   ne.showCampsite(c);
   let eleM = (c.elevation_ft || 200) / 3.28084 + 15;
@@ -5586,4 +5707,4 @@ function A(){
     O(k, { left: 360, right: 100, top: 40, bottom: 60 }, Nu, Mu);
   }
 }
-function j(e){let t=T?T.to.azimuth:d.getAzimuthalAngle();E({azimuth:Math.round((t+e*Math.PI/2-Nu)/(Math.PI/2))*(Math.PI/2)+Nu},900)}function ee(e){let t=T?T.to.zoom:u.zoom;E({zoom:Ct.clamp(t*e,d.minZoom,d.maxZoom)},450)}let te=null,M=null,N=0,P=0,ne=new Du(a,{campsites:campList,onSelectCamp:(c)=>selectCampsite(c),onSelect:(e,t)=>F(e,t),onHover:e=>re(e),onFilter:e=>{p.filter=e,p.rebuildBase(),L=!0},onPlans:e=>{p.plans=e,p.rebuildBase(),m.showTrailheads=e.size>0,te!==null&&!p.matches(a[te])&&F(null),L=!0},matches:e=>p.matches(e),onHome:A,onRotate:j,onZoom:ee});function F(e,t={}){te=e,p.setSelected(e),ne.showTrail(e===null?null:a[e]),P=e===null?0:1,e!==null&&t.fly!==!1&&O(p.bounds(e)),L=!0}function re(e){e!==M&&(M=e,p.setHover(e===te?null:e),n.style.cursor=e===null?``:`pointer`,L=!0)}let ie=document.getElementById(`tooltip`),ae=null,oe=null;n.addEventListener(`pointerdown`,e=>{ae={x:e.clientX,y:e.clientY,t:performance.now()},T=null});let lastPickT=0;n.addEventListener(`pointermove`,e=>{oe={x:e.clientX,y:e.clientY};if(e.buttons){ie.classList.remove(`visible`);se=!1;return;}let now=performance.now();if(now-lastPickT>32){lastPickT=now;se=!0;}}),n.addEventListener(`pointerleave`,()=>{oe=null,re(null),ie.classList.remove(`visible`)}),n.addEventListener(`pointerup`,e=>{if(ae){if(Math.hypot(e.clientX-ae.x,e.clientY-ae.y)<15&&e.button===0){let t=p.pick(u,e.clientX,e.clientY,b,x,10);t===null?te!==null&&F(null):F(t)}ae=null}});let se=!1;function I(){if(!se||!oe)return;se=!1;let e=p.pick(u,oe.x,oe.y,b,x,9);if(re(e),e!==null){let t=a[e],n=t.plan?`planned: ${ku(t)}`:t.bike?`hike & bike`:`hike only`;ie.innerHTML=`<strong>${t.name}</strong><span>${t.lengthMi} mi · ${n}</span>`,ie.style.transform=`translate(${oe.x+16}px, ${oe.y+14}px)`,ie.classList.add(`visible`)}else ie.classList.remove(`visible`)}window.addEventListener(`keydown`,e=>{e.target.tagName!==`INPUT`&&((e.key===`q`||e.key===`Q`)&&j(-1),(e.key===`e`||e.key===`E`)&&j(1),(e.key===`=`||e.key===`+`)&&ee(1.5),(e.key===`-`||e.key===`_`)&&ee(1/1.5),(e.key===`h`||e.key===`H`)&&A(),e.key===`Escape`&&F(null))});let L=!0;d.addEventListener(`change`,()=>{L=!0});let ce=document.getElementById(`compass-needle`);function le(e){requestAnimationFrame(le),D(e),T||d.update();let t=d.target,n=Ct.clamp(t.x,-i.widthM/200-250,i.widthM/200+250),r=Ct.clamp(t.z,-i.heightM/200-200,i.heightM/200+450);(n!==t.x||r!==t.z)&&(u.position.x+=n-t.x,u.position.z+=r-t.z,t.x=n,t.z=r);let a=N+(P-N)*.12;Math.abs(a-N)>.001&&(N=a,f.focusUniform.value=N*.45,L=!0),I(),L&&(L=!1,p.setPixelsPerUnit(x/ju*u.zoom),c.setRenderTarget(h),c.render(l,u),c.setRenderTarget(null),c.render(_,y),m.update(u,b,x),campsiteMgr.update(u,b,x),ce.style.transform=`rotate(${d.getAzimuthalAngle()*180/Math.PI}deg)`)}window.addEventListener(`resize`,S),S(); let initZ = b <= 768 ? .38 : .7; u.zoom = initZ; u.updateProjectionMatrix(); w(Nu, Mu, new J(0, 0, 0)); requestAnimationFrame(le); if (r) { r.classList.add('done'); setTimeout(() => r.style.display = 'none', 700); }; setTimeout(A, 150);let ue=location.hash.match(/^#(trail|plan)=(.+)$/);if(ue){let e=decodeURIComponent(ue[2]).toLowerCase(),t=ue[1]===`plan`,n=a.find(n=>!!n.plan===t&&n.name.toLowerCase()===e);n&&(t&&ne.setPlans(!0,yu(n)),setTimeout(()=>F(n.id),1300))}}Pu().catch(e=>{console.error(e);let el=document.getElementById(`loading`);if(el){el.innerHTML=`<p style="color:#c92f7b;padding:20px;">Error loading map: `+e.message+`</p>`;}});
+function j(e){let t=T?T.to.azimuth:d.getAzimuthalAngle();E({azimuth:Math.round((t+e*Math.PI/2-Nu)/(Math.PI/2))*(Math.PI/2)+Nu},900)}function ee(e){let t=T?T.to.zoom:u.zoom;E({zoom:Ct.clamp(t*e,d.minZoom,d.maxZoom)},450)}let te=null,M=null,N=0,P=0,ne=new Du(a,{campsites:campList,onSelectCamp:(c)=>selectCampsite(c),onSelect:(e,t)=>F(e,t),onHover:e=>re(e),onFilter:e=>{p.filter=e,p.rebuildBase(),L=!0},onPlans:e=>{p.plans=e,p.rebuildBase(),m.showTrailheads=e.size>0,te!==null&&!p.matches(a[te])&&F(null),L=!0},matches:e=>p.matches(e),onHome:A,onRotate:j,onZoom:ee});function F(e,t={}){te=e,p.setSelected(e),ne.showTrail(e===null?null:a[e]),P=e===null?0:1,e!==null&&t.fly!==!1&&O(p.bounds(e)),L=!0}function re(e){e!==M&&(M=e,p.setHover(e===te?null:e),n.style.cursor=e===null?``:`pointer`,L=!0)}let ie=document.getElementById(`tooltip`),ae=null,oe=null;n.addEventListener(`pointerdown`,e=>{ae={x:e.clientX,y:e.clientY,t:performance.now()},T=null});let lastPickT=0;n.addEventListener(`pointermove`,e=>{oe={x:e.clientX,y:e.clientY};if(e.buttons){ie.classList.remove(`visible`);se=!1;return;}let now=performance.now();if(now-lastPickT>32){lastPickT=now;se=!0;}}),n.addEventListener(`pointerleave`,()=>{oe=null,re(null),ie.classList.remove(`visible`)}),n.addEventListener(`pointerup`,e=>{if(ae){if(Math.hypot(e.clientX-ae.x,e.clientY-ae.y)<15&&e.button===0){let t=p.pick(u,e.clientX,e.clientY,b,x,10);t===null?te!==null&&F(null):F(t)}ae=null}});let se=!1;function I(){if(!se||!oe)return;se=!1;let e=p.pick(u,oe.x,oe.y,b,x,9);if(re(e),e!==null){let t=a[e],n=t.plan?`planned: ${ku(t)}`:t.bike?`hike & bike`:`hike only`;ie.innerHTML=`<strong>${t.name}</strong><span>${t.lengthMi} mi · ${n}</span>`,ie.style.transform=`translate(${oe.x+16}px, ${oe.y+14}px)`,ie.classList.add(`visible`)}else ie.classList.remove(`visible`)}window.addEventListener(`keydown`,e=>{e.target.tagName!==`INPUT`&&((e.key===`q`||e.key===`Q`)&&j(-1),(e.key===`e`||e.key===`E`)&&j(1),(e.key===`=`||e.key===`+`)&&ee(1.5),(e.key===`-`||e.key===`_`)&&ee(1/1.5),(e.key===`h`||e.key===`H`)&&A(),e.key===`Escape`&&F(null))});let L=!0;d.addEventListener(`change`,()=>{L=!0});let ce=document.getElementById(`compass-needle`);function le(e){requestAnimationFrame(le),D(e),T||d.update();let t=d.target,n=Ct.clamp(t.x,-i.widthM/200-250,i.widthM/200+250),r=Ct.clamp(t.z,-i.heightM/200-200,i.heightM/200+450);(n!==t.x||r!==t.z)&&(u.position.x+=n-t.x,u.position.z+=r-t.z,t.x=n,t.z=r);let a=N+(P-N)*.12;Math.abs(a-N)>.001&&(N=a,f.focusUniform.value=N*.45,L=!0),I(),L&&(L=!1,p.setPixelsPerUnit(x/ju*u.zoom),c.setRenderTarget(h),c.render(l,u),c.setRenderTarget(null),c.render(_,y),m.update(u,b,x),campsiteMgr.update(u,b,x),ambienceMgr.update(u,b,x,e),ce.style.transform=`rotate(${d.getAzimuthalAngle()*180/Math.PI}deg)`)}window.addEventListener(`resize`,S),S(); let initZ = b <= 768 ? .38 : .7; u.zoom = initZ; u.updateProjectionMatrix(); w(Nu, Mu, new J(0, 0, 0)); requestAnimationFrame(le); if (r) { r.classList.add('done'); setTimeout(() => r.style.display = 'none', 700); }; setTimeout(A, 150);let ue=location.hash.match(/^#(trail|plan)=(.+)$/);if(ue){let e=decodeURIComponent(ue[2]).toLowerCase(),t=ue[1]===`plan`,n=a.find(n=>!!n.plan===t&&n.name.toLowerCase()===e);n&&(t&&ne.setPlans(!0,yu(n)),setTimeout(()=>F(n.id),1300))}}Pu().catch(e=>{console.error(e);let el=document.getElementById(`loading`);if(el){el.innerHTML=`<p style="color:#c92f7b;padding:20px;">Error loading map: `+e.message+`</p>`;}});
