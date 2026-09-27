@@ -5135,6 +5135,114 @@ class CampsiteManager {
     }
   }
 };
+
+const ALLTRAILS_DIRECT_SLUGS = {
+  // Bay Area
+  'dipsea trail': 'us/california/dipsea-trail',
+  'steep ravine trail': 'us/california/steep-ravine-trail-to-stinson-beach',
+  'matt davis trail': 'us/california/matt-davis-trail-to-stinson-beach',
+  'mission peak': 'us/california/mission-peak-loop-via-hidden-valley-trail',
+  'mission peak loop': 'us/california/mission-peak-loop-via-hidden-valley-trail',
+  'mount diablo summit': 'us/california/mount-diablo-summit-trail',
+  'grand loop trail': 'us/california/mount-diablo-grand-loop-trail',
+  'mount tamalpais east peak': 'us/california/east-peak-via-fern-creek-trail',
+  'redwood grove loop trail': 'us/california/redwood-grove-loop-trail',
+  'fall creek to historic lime kilns trail': 'us/california/fall-creek-trail-to-lime-kilns',
+  'old cove landing & ohlone bluff trail': 'us/california/ohlone-bluff-trail-and-fern-grotto',
+  'maple falls via bridge creek trail': 'us/california/bridge-creek-trail-to-maple-falls',
+  'wilder ridge loop trail': 'us/california/wilder-ridge-loop',
+  'engelsmans loop to enchanted loop': 'us/california/enchanted-loop-trail',
+  'top of the world & branciforte loop': 'us/california/delaveaga-park-loop',
+  'west cliff drive promenade & surf path': 'us/california/west-cliff-drive-walking-trail',
+  'castle rock trail': 'us/california/saratoga-gap-and-ridge-trail-loop',
+  'windy hill loop': 'us/california/windy-hill-loop',
+  'purisima creek trail': 'us/california/purisima-creek-trail',
+  'french trail': 'us/california/french-trail-loop-via-stream-and-tres-sendas-trail',
+  'stream trail': 'us/california/stream-trail',
+  'skyline gate staging area': 'us/california/skyline-gate-staging-area',
+  'alamere falls': 'us/california/alamere-falls-via-coast-trail-from-palomarin-trailhead',
+  'tomales point trail': 'us/california/tomales-point-trail',
+  'chimney rock trail': 'us/california/chimney-rock-trail',
+  'angel island perimeter trail': 'us/california/angel-island-perimeter-trail',
+  'lands end trail': 'us/california/lands-end-trail',
+  'batteries to bluffs trail': 'us/california/batteries-to-bluffs-trail',
+  'presidio promenade': 'us/california/presidio-promenade',
+  'golden gate bridge': 'us/california/golden-gate-bridge-trail',
+  'tennessee valley trail': 'us/california/tennessee-valley-trail',
+  'muir woods main trail': 'us/california/muir-woods-main-trail',
+  'cataract falls trail': 'us/california/cataract-falls-trail',
+  // Seattle & Pacific Northwest
+  'discovery park loop trail': 'us/washington/discovery-park-loop-trail',
+  'burke-gilman trail (seattle to kenmore)': 'us/washington/burke-gilman-trail',
+  'elliott bay trail & myrtle edwards park': 'us/washington/elliott-bay-trail',
+  'green lake inner loop path': 'us/washington/green-lake-park-trail',
+  'washington park arboretum & foster island trail': 'us/washington/washington-park-arboretum-trail',
+  'seward park perimeter loop': 'us/washington/seward-park-perimeter-loop',
+  'alki beach trail & lighthouse promenade': 'us/washington/alki-trail',
+  'sammamish river trail (bothell to marymoor)': 'us/washington/sammamish-river-trail',
+  'poo poo point via chirico trail': 'us/washington/poo-poo-point-via-chirico-trail',
+  'poo poo point via high school trail': 'us/washington/poo-poo-point-trail-via-high-school-trail',
+  'west tiger 3 trail (conditioning classic)': 'us/washington/west-tiger-3-trail',
+  'cable line trail (tiger mountain)': 'us/washington/cable-line-trail-to-west-tiger-3',
+  'wilderness peak & de leo wall loop': 'us/washington/wilderness-peak-loop-trail',
+  'coal creek falls & quarry trail': 'us/washington/coal-creek-falls',
+  'rattlesnake ledge trail': 'us/washington/rattlesnake-ledge-trail',
+  'mount si trail (haystack summit)': 'us/washington/mount-si-trail',
+  'little si trail': 'us/washington/little-si-trail',
+  'mailbox peak trail (old & new trails)': 'us/washington/mailbox-peak-trail-new',
+  'snow lake trail (alpental valley)': 'us/washington/snow-lake-trail',
+  'twin falls trail': 'us/washington/twin-falls-trail',
+  'franklin falls trail': 'us/washington/franklin-falls-trail',
+  'kendall katwalk (pct section j)': 'us/washington/kendall-katwalk-trail',
+  'granite mountain fire lookout trail': 'us/washington/granite-mountain-trail',
+  'wallace falls (woody trail)': 'us/washington/wallace-falls-via-woody-trail',
+  'lake serene & bridal veil falls': 'us/washington/lake-serene-and-bridal-veil-falls-trail',
+  'mount pilchuck fire lookout trail': 'us/washington/mount-pilchuck-trail',
+  'lake 22 trail (rainforest & talus classic)': 'us/washington/lake-22-trail',
+  'colchuck lake trail (the enchantments gateway)': 'us/washington/colchuck-lake',
+  'blanca lake trail': 'us/washington/blanca-lake-trail',
+  'skyline trail loop (paradise glacier meadows)': 'us/washington/skyline-trail-loop',
+  'mount fremont fire lookout trail': 'us/washington/mount-fremont-lookout-trail-via-sourdough-ridge-trail',
+  'burroughs mountain trail': 'us/washington/burroughs-mountain-trail',
+  'summerland to panhandle gap (wonderland trail)': 'us/washington/summerland-trail-to-panhandle-gap',
+  'tolmie peak lookout & eunice lake': 'us/washington/tolmie-peak-trail',
+  'naches peak loop trail': 'us/washington/naches-peak-loop-trail',
+  'hurricane hill trail (hurricane ridge)': 'us/washington/hurricane-hill-via-hurricane-ridge-trail',
+  'mount storm king (lake crescent)': 'us/washington/mount-storm-king',
+  'hoh rain forest (hall of mosses trail)': 'us/washington/hall-of-mosses-trail',
+  'rialto beach to hole-in-the-wall': 'us/washington/hole-in-the-wall-from-rialto-beach',
+  'mount ellinor trail (hood canal overlook)': 'us/washington/mount-ellinor-trail',
+  'cascade pass & sahale arm trail': 'us/washington/cascade-pass-and-sahale-arm-trail',
+  'maple pass loop (rainy pass larches)': 'us/washington/maple-pass-trail',
+  'chain lakes loop (artist point / mt shuksan)': 'us/washington/chain-lakes-loop-trail',
+  'yellow aster butte trail': 'us/washington/yellow-aster-butte-trail',
+  'oyster dome trail (chuckanut drive)': 'us/washington/oyster-dome-trail',
+  'grouse grind (mother nature s stairmaster)': 'canada/british-columbia/grouse-grind-trail',
+  'stawamus chief trail (first & second peak)': 'canada/british-columbia/the-stawamus-chief-first-and-second-peaks',
+  'stanley park seawall promenade': 'canada/british-columbia/stanley-park-seawall'
+};
+
+function getAllTrailsUrl(e) {
+  let name = (e.name || '').trim();
+  let area = (e.area || '').trim();
+  let norm = name.toLowerCase().replace(/\s+/g, ' ');
+  if (ALLTRAILS_DIRECT_SLUGS[norm]) {
+    return 'https://www.alltrails.com/trail/' + ALLTRAILS_DIRECT_SLUGS[norm];
+  }
+  let isSeattle = (typeof location !== 'undefined' && location.pathname.includes('/seattle')) || 
+                  (typeof document !== 'undefined' && document.title && document.title.includes('Seattle')) ||
+                  (area && (area.includes('Seattle') || area.includes('Cascades') || area.includes('Rainier') || area.includes('Olympic') || area.includes('King') || area.includes('Washington') || area.includes('Snohomish') || area.includes('Pierce')));
+  let state = isSeattle ? 'Washington' : 'California';
+  let qParts = [name.replace(/#d+/g, '').replace(/Track d+/g, '').trim()];
+  if (area && !name.toLowerCase().includes(area.toLowerCase().replace(/(.*?)/, '').trim())) {
+    let cleanArea = area.replace(/(.*?)/g, '').trim();
+    if (cleanArea && cleanArea.length > 2) qParts.push(cleanArea);
+  }
+  qParts.push(state);
+  let q = qParts.join(' ').replace(/\s+/g, ' ').trim();
+  return 'https://www.alltrails.com/search?q=' + encodeURIComponent(q);
+}
+
 var Du=class{trails;h;filter=`all`;plansOn=!1;planGroups=new Set([`new`,`decommission`]);query=``;results=[];active=-1;selected=null;list=wu(`#trail-list`);search=wu(`#search`);card=wu(`#card`);constructor(e,t){
 this.list.addEventListener('click', (ev) => {
   let li = ev.target.closest('li[data-camp-id]');
@@ -5451,11 +5559,17 @@ showTrail(e){
   if (window.innerWidth <= 768 && pnl) {
     pnl.hidden = Boolean(e);
   }
-if(this.selected=e?e.id:null,this.list.querySelectorAll(`li[data-id]`).forEach(t=>{let n=e!==null&&Number(t.dataset.id)===e.id;t.classList.toggle(`selected`,n),n&&t.scrollIntoView({block:`nearest`,behavior:`smooth`})}),!e){this.card.classList.remove(`open`),history.replaceState(null,``,location.pathname);return}if(history.replaceState(null,``,`#${e.plan?`plan`:`trail`}=${encodeURIComponent(e.name)}`),e.plan)return this.showPlan(e);let t=[e.hike?`<span class="chip hike">🥾 Hiking</span>`:``,e.bike?`<span class="chip bike">🚵 Mountain bikes${e.bikeInferred?`<em>likely allowed</em>`:``}</span>`:e.bikePartial?`<span class="chip bike">🚵 Bikes on part of it</span>`:`<span class="chip nobike">No bikes${e.wilderness?` · wilderness`:``}</span>`].join(``),n=[[`Bike difficulty`,e.difficulty?`${e.difficulty}${e.mtbScale===null?``:` <small>(S${e.mtbScale})</small>`}`:null],[`Hike difficulty`,e.hikeDifficulty],[`Surface`,e.surface?Tu(e.surface.replace(/_/g,` `)):null],[`Managed by`,e.operator?Tu(e.operator):null],[`Elevation`,`${e.minFt.toLocaleString()}′ – ${e.maxFt.toLocaleString()}′`],[`Source`,[e.official?`USFS trail inventory`:null,e.sources.includes(`osm`)?`OpenStreetMap`:null].filter(Boolean).join(` + `)]];this.card.innerHTML=`
+if(this.selected=e?e.id:null,this.list.querySelectorAll(`li[data-id]`).forEach(t=>{let n=e!==null&&Number(t.dataset.id)===e.id;t.classList.toggle(`selected`,n),n&&t.scrollIntoView({block:`nearest`,behavior:`smooth`})}),!e){this.card.classList.remove(`open`),history.replaceState(null,``,location.pathname);return}if(history.replaceState(null,``,`#${e.plan?`plan`:`trail`}=${encodeURIComponent(e.name)}`),e.plan)return this.showPlan(e);let t=[e.hike?`<span class="chip hike">🥾 Hiking</span>`:``,e.bike?`<span class="chip bike">🚵 Mountain bikes${e.bikeInferred?`<em>likely allowed</em>`:``}</span>`:e.bikePartial?`<span class="chip bike">🚵 Bikes on part of it</span>`:`<span class="chip nobike">No bikes${e.wilderness?` · wilderness`:``}</span>`].join(``),n=[[`Bike difficulty`,e.difficulty?`${e.difficulty}${e.mtbScale===null?``:` <small>(S${e.mtbScale})</small>`}`:null],[`Hike difficulty`,e.hikeDifficulty],[`Surface`,e.surface?Tu(e.surface.replace(/_/g,` `)):null],[`Managed by`,e.operator?Tu(e.operator):null],[`Elevation`,`${e.minFt.toLocaleString()}′ – ${e.maxFt.toLocaleString()}′`],[`AllTrails`,`<a href="${getAllTrailsUrl(e)}" target="_blank" rel="noopener noreferrer" class="alltrails-dl-link">Trail guide & reviews \u2197</a>`],[`Source`,[e.official?`USFS trail inventory`:null,e.sources.includes(`osm`)?`OpenStreetMap`:null].filter(Boolean).join(` + `)]];this.card.innerHTML=`
       <button id="card-close" class="icon-btn" aria-label="Close">✕</button>
       <p class="eyebrow">${e.official?`<span class="stamp">Official trail</span>`:``}${e.area?Tu(e.area):``}</p>
       <h2>${Tu(e.name)}</h2>
       <div class="chips">${t}</div>
+      <a href="${getAllTrailsUrl(e)}" target="_blank" rel="noopener noreferrer" class="trail-alltrails-cta">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 20h18L14 7l-4 7-2.5-4.5L3 20z"/>
+        </svg>
+        <span>View on AllTrails &nearr;</span>
+      </a>
       <div class="stats">
         <div><b>${e.lengthMi}</b><span>miles</span></div>
         <div><b><i>↗</i>${e.gainFt.toLocaleString()}′</b><span>climbing</span></div>
@@ -5552,6 +5666,12 @@ showPlan(e){let t=e.plan,n=yu(e),r=(e,t)=>`<span class="chip ${e}">${t}</span>`,
       <p class="eyebrow"><span class="stamp plan" style="color:${`#`+Su(e).getHexString()}">Approved plan · 2026</span>${n===`new`?`not built yet`:``}</p>
       <h2>${Tu(e.name)}</h2>
       <div class="chips">${i}</div>
+      <a href="${getAllTrailsUrl(e)}" target="_blank" rel="noopener noreferrer" class="trail-alltrails-cta">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 20h18L14 7l-4 7-2.5-4.5L3 20z"/>
+        </svg>
+        <span>Search on AllTrails &nearr;</span>
+      </a>
       <div class="stats">
         <div><b>${e.lengthMi}</b><span>miles</span></div>
         <div><b><i>↗</i>${e.gainFt.toLocaleString()}′</b><span>climbing</span></div>
