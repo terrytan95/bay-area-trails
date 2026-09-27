@@ -5264,10 +5264,21 @@ this.trails=e,this.h=t,this.campsites=t.campsites||[],this.selectedCamp=null,thi
 
   function getSnapHeights() {
     let vh = window.innerHeight;
-    let fullH = Math.max(300, vh - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '14', 10) + 24));
-    let medH = Math.round(vh * 0.48);
+    let sat = 24;
+    let sab = 12;
+    let testEl = document.createElement("div");
+    testEl.style.cssText = "position:fixed;top:0;left:0;padding-top:env(safe-area-inset-top,24px);padding-bottom:env(safe-area-inset-bottom,12px);visibility:hidden;pointer-events:none;";
+    document.body.appendChild(testEl);
+    let cs = getComputedStyle(testEl);
+    sat = Math.max(24, parseFloat(cs.paddingTop) || 24);
+    sab = Math.max(12, parseFloat(cs.paddingBottom) || 12);
+    testEl.remove();
+    let topMargin = sat + 10;
+    let bottomMargin = sab + 10;
+    let fullH = Math.max(260, Math.round(vh - topMargin - bottomMargin));
+    let medH = Math.max(220, Math.min(Math.round(vh * 0.48), fullH - 50));
     let colH = 66;
-    return { colH, medH, fullH };
+    return { colH, medH, fullH, sat, sab };
   }
 
   function applyState(newState, animate) {
@@ -5371,6 +5382,7 @@ this.trails=e,this.h=t,this.campsites=t.campsites||[],this.selectedCamp=null,thi
     }
   }
 
+  panel.addEventListener("scroll", () => { if (window.innerWidth <= 768 && panel.scrollTop !== 0) { panel.scrollTop = 0; } }, { passive: true });
   handle.addEventListener('pointerdown', onPointerDown);
   if (header) {
     header.addEventListener('pointerdown', onPointerDown);

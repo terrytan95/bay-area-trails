@@ -60,8 +60,10 @@
     top: auto !important;
     bottom: env(safe-area-inset-bottom, 10px) !important;
     height: auto;
-    max-height: 52vh;
+    max-height: 48dvh;
     border-radius: var(--radius);
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
     box-shadow: 0 8px 36px rgba(0, 0, 0, 0.28);
     background: color-mix(in srgb, var(--paper-2) 97%, transparent);
     -webkit-backdrop-filter: blur(4px);
@@ -85,8 +87,9 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    touch-action: none;
-    flex-shrink: 0;
+    touch-action: none !important;
+    flex-shrink: 0 !important;
+    z-index: 10;
   }
   .sheet-handle::before {
     content: '';
@@ -102,7 +105,8 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
+    touch-action: none !important;
   }
   #panel header h1 {
     font-size: 21px;
@@ -207,15 +211,19 @@
     max-height: 48vh !important;
   }
 
-  /* Full state: full screen expanded with handle preserved on top */
+  /* Full state: full screen expanded with handle strictly preserved below top notch */
   #panel.state-full {
-    height: calc(100vh - env(safe-area-inset-top, 14px) - 24px) !important;
-    max-height: calc(100vh - env(safe-area-inset-top, 14px) - 24px) !important;
+    top: calc(env(safe-area-inset-top, 24px) + 8px) !important;
+    bottom: calc(env(safe-area-inset-bottom, 12px) + 8px) !important;
+    height: calc(100dvh - env(safe-area-inset-top, 24px) - env(safe-area-inset-bottom, 12px) - 16px) !important;
+    max-height: calc(100dvh - env(safe-area-inset-top, 24px) - env(safe-area-inset-bottom, 12px) - 16px) !important;
   }
   #panel.state-full #trail-list {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
   /* Interactive Drag Handles */
