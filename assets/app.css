@@ -932,3 +932,14 @@
 .alltrails-dl-link:hover {
   text-decoration: underline !important;
 }
+
+
+/* Dog Friendliness Chips */
+.chip.dog {
+  color: #1e3a8a !important;
+  background: rgba(59, 130, 246, 0.12) !important;
+}
+.chip.nodog {
+  color: #831843 !important;
+  background: rgba(236, 72, 153, 0.1) !important;
+}
