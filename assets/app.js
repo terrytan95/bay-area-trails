@@ -5138,6 +5138,14 @@ class CampsiteManager {
 
 const ALLTRAILS_DIRECT_SLUGS = {
   // Bay Area
+  'east ridge trail': 'us/california/east-ridge-trail--4',
+  'west ridge trail': 'us/california/west-ridge-trail',
+  'stream trail': 'us/california/stream-trail',
+  'french trail': 'us/california/french-trail',
+  'tres sendas trail': 'us/california/tres-sendas-to-stream-trail-loop',
+  'eucalyptus trail': 'us/california/eucalyptus-trail',
+  'phillips loop': 'us/california/phillips-loop',
+  'skyline gate staging area': 'us/california/skyline-gate-staging-area',
   'dipsea trail': 'us/california/dipsea-trail',
   'steep ravine trail': 'us/california/steep-ravine-trail-to-stinson-beach',
   'matt davis trail': 'us/california/matt-davis-trail-to-stinson-beach',
@@ -5157,9 +5165,6 @@ const ALLTRAILS_DIRECT_SLUGS = {
   'castle rock trail': 'us/california/saratoga-gap-and-ridge-trail-loop',
   'windy hill loop': 'us/california/windy-hill-loop',
   'purisima creek trail': 'us/california/purisima-creek-trail',
-  'french trail': 'us/california/french-trail-loop-via-stream-and-tres-sendas-trail',
-  'stream trail': 'us/california/stream-trail',
-  'skyline gate staging area': 'us/california/skyline-gate-staging-area',
   'alamere falls': 'us/california/alamere-falls-via-coast-trail-from-palomarin-trailhead',
   'tomales point trail': 'us/california/tomales-point-trail',
   'chimney rock trail': 'us/california/chimney-rock-trail',
@@ -5171,6 +5176,21 @@ const ALLTRAILS_DIRECT_SLUGS = {
   'tennessee valley trail': 'us/california/tennessee-valley-trail',
   'muir woods main trail': 'us/california/muir-woods-main-trail',
   'cataract falls trail': 'us/california/cataract-falls-trail',
+  'homestead trail': 'us/california/homestead-trail',
+  'rocky shoreline trail': 'us/california/rocky-shoreline-trail',
+  'crown beach trail': 'us/california/robert-w-crown-memorial-state-beach-trail',
+  'remington loop entrance': 'us/california/remington-loop-entrance',
+  'murphys meadow trail': 'us/california/murphys-meadow-trail',
+  'las trampas ridge trail': 'us/california/las-trampas-ridge-trail',
+  'hardy canyon trail': 'us/california/hardy-canyon-trail',
+  'del amigo trail': 'us/california/del-amigo-trail',
+  'valley view trail': 'us/california/valley-view-trail',
+  'miwok trail': 'us/california/miwok-trail',
+  'hogback way': 'us/california/hogback-way',
+  'trapline trail': 'us/california/trapline-trail',
+  'mahogany trail': 'us/california/mahogany-trail',
+  'eastshore': 'us/california/mclaughlin-eastshore-state-park-trail',
+  'north point isabel trail': 'us/california/point-isabel-dog-park-loop',
   // Seattle & Pacific Northwest
   'discovery park loop trail': 'us/washington/discovery-park-loop-trail',
   'burke-gilman trail (seattle to kenmore)': 'us/washington/burke-gilman-trail',
@@ -5223,26 +5243,27 @@ const ALLTRAILS_DIRECT_SLUGS = {
 };
 
 function getAllTrailsUrl(e) {
+  if (e.alltrails_url) return e.alltrails_url;
   let name = (e.name || '').trim();
   let area = (e.area || '').trim();
   let norm = name.toLowerCase().replace(/\s+/g, ' ');
   if (ALLTRAILS_DIRECT_SLUGS[norm]) {
-    return 'https://www.alltrails.com/trail/' + ALLTRAILS_DIRECT_SLUGS[norm];
+    return 'https://www.alltrails.com/explore/trail/' + ALLTRAILS_DIRECT_SLUGS[norm];
   }
   let isSeattle = (typeof location !== 'undefined' && location.pathname.includes('/seattle')) || 
                   (typeof document !== 'undefined' && document.title && document.title.includes('Seattle')) ||
                   (area && (area.includes('Seattle') || area.includes('Cascades') || area.includes('Rainier') || area.includes('Olympic') || area.includes('King') || area.includes('Washington') || area.includes('Snohomish') || area.includes('Pierce')));
-  let state = isSeattle ? 'Washington' : 'California';
-  let qParts = [name.replace(/#d+/g, '').replace(/Track d+/g, '').trim()];
-  if (area && !name.toLowerCase().includes(area.toLowerCase().replace(/(.*?)/, '').trim())) {
-    let cleanArea = area.replace(/(.*?)/g, '').trim();
-    if (cleanArea && cleanArea.length > 2) qParts.push(cleanArea);
+  let isCanada = area && (area.includes('BC') || area.includes('Vancouver') || area.includes('British Columbia'));
+  let state = isCanada ? 'canada/british-columbia' : (isSeattle ? 'us/washington' : 'us/california');
+  let slug = name.toLowerCase()
+    .replace(/\(.*\)/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  if (slug) {
+    return 'https://www.alltrails.com/explore/trail/' + state + '/' + slug;
   }
-  qParts.push(state);
-  let q = qParts.join(' ').replace(/\s+/g, ' ').trim();
-  return 'https://www.alltrails.com/search?q=' + encodeURIComponent(q);
+  return 'https://www.alltrails.com/explore/trail/' + state + '/' + encodeURIComponent(name);
 }
-
 var Du=class{trails;h;filter=`all`;plansOn=!1;planGroups=new Set([`new`,`decommission`]);query=``;results=[];active=-1;selected=null;list=wu(`#trail-list`);search=wu(`#search`);card=wu(`#card`);constructor(e,t){
 this.list.addEventListener('click', (ev) => {
   let li = ev.target.closest('li[data-camp-id]');
